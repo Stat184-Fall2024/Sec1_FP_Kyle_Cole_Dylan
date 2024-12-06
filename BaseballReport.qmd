@@ -1,11 +1,32 @@
 ---
-title: "BaseballReport"
-format: html
+title: "Baseball Report"
+author: "Kyle Gilbert, Cole _, Dylan _"
+highlight-style: github
+format:
+  html:
+    code-fold: true
+  pdf:
+    geometry: 
+      - top=30mm
+      - left=30mm
 editor: visual
 ---
 
+```{r}
+#| label: load-pkgs
+#| code-summary: "Packages"
+#| message: false
+#| echo: false
+
+library(tidyverse)
+library(knitr)
+library(ggplot2)
+```
 
 ```{r}
+#| label: load-datasets
 #| echo: false
-2 * 2
+
+
 ```
+
