@@ -39,3 +39,6 @@ pitching <- read.csv("data/Pitching.csv")
 pitching_post <- read.csv("data/PitchingPost.csv")
 
 ```
+**Project Description:**
+
+The goal of this final R project is to analyze the percentage of a team's salary cap allocated to specific players from 2000 to now and to explore the factors driving these players' compensation levels.
