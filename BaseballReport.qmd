@@ -27,6 +27,8 @@ library(ggplot2)
 #| label: load-datasets
 #| echo: false
 
-
 ```
 
+**Project Description:**
+
+The goal of this final R project is to analyze the percentage of a team's salary cap allocated to specific players from 2000 to now and to explore the factors driving these players' compensation levels.
