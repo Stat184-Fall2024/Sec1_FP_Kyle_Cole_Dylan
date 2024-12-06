@@ -27,6 +27,15 @@ library(ggplot2)
 #| label: load-datasets
 #| echo: false
 
+# Read in data
+# Set working directory to path to repo
+master <- read.csv("data/Master.csv")
+salaries <- read.csv("data/Salaries.csv")
+batting <- read.csv("data/Batting.csv")
+batting_post <- read.csv("data/BattingPost.csv")
+fielding <- read.csv("data/Fielding.csv")
+fielding_of <- read.csv("data/FieldingOF.csv")
+pitching <- read.csv("data/Pitching.csv")
+pitching_post <- read.csv("data/PitchingPost.csv")
 
 ```
-
