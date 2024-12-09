@@ -27,18 +27,64 @@ library(ggplot2)
 #| label: load-datasets
 #| echo: false
 
-# Read in data
-# Set working directory to path to repo
-master <- read.csv("data/Master.csv")
-salaries <- read.csv("data/Salaries.csv")
-batting <- read.csv("data/Batting.csv")
-batting_post <- read.csv("data/BattingPost.csv")
-fielding <- read.csv("data/Fielding.csv")
-fielding_of <- read.csv("data/FieldingOF.csv")
-pitching <- read.csv("data/Pitching.csv")
-pitching_post <- read.csv("data/PitchingPost.csv")
-
 ```
+
 **Project Description:**
 
 The goal of this final R project is to analyze the percentage of a team's salary cap allocated to specific players from 2000 to now and to explore the factors driving these players' compensation levels.
+
+**Questions to answer:**
+
+-   **Player Salary Insights**
+
+    -   How does the percentage of salary cap each player earns correlate with their performance metrics (e.g., batting average, home runs, WAR)?
+
+    -   What is the distribution of salaries across different positions (pitcher, catcher, etc.) for the Yankees compared to other teams?
+
+-   **Team-Level Analysis**
+
+    -   How does the Yankees' average player salary compare to that of other MLB teams?
+
+    -   What percentage of the Yankees' salary cap is spent on top-performing players compared to the league average?
+
+-   **Historical Trends**
+
+    -   How has the percentage of the salary cap allocated to top-paid players changed over the years for the Yankees and other teams?
+
+    -   Are there trends in salary allocation related to team performance in playoffs or championships?
+
+-   **Position-Based Analysis**
+
+    -   Are certain positions (e.g., pitchers, shortstops) allocated a higher percentage of the salary cap across MLB teams? How does this compare with the Yankees?
+
+    -   Do players in specific positions receive more or less than their performance justifies?
+
+-   **Team Strategy Insights**
+
+    -   Does a higher percentage of salary cap spent on star players correlate with better overall team performance?
+
+    -   How do the Yankees' salary allocation strategies compare to teams with similar or better performance records?
+
+-   **League-Wide Comparisons**
+
+    -   How do the Yankees rank in terms of salary cap utilization efficiency compared to other MLB teams?
+
+    -   Are there any anomalies or outliers in salary allocations across the league?
+
+-   **Contract Lengths and Salaries**
+
+    -   Do longer contracts for Yankees players correlate with a higher percentage of the salary cap allocation?
+
+    -   How does contract length influence the perceived value of players?
+
+-   **Demographics and Salaries**
+
+    -   Are there correlations between player age, experience, or nationality and the percentage of the salary cap they receive?
+
+    -   How do rookie salaries as a percentage of salary caps compare between the Yankees and other teams?
+
+-   **Revenue vs. Salaries**
+
+    -   Does the Yankees' revenue have a stronger correlation with salary cap allocations compared to other teams?
+
+    -   How does team revenue impact the overall spending strategy on players?
