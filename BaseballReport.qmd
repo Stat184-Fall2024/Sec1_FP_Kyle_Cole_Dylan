@@ -37,6 +37,7 @@ batting_raw <- read.csv("data/Batting.csv")
 pitching_raw <- read.csv("data/Pitching.csv")
 fielding_raw <- read.csv("data/Fielding.csv")
 teams_raw <- read.csv("data/Teams.csv")
+cpi_raw <- read.csv("data/CPI_data.csv")
 ```
 
 ```{r}
@@ -173,16 +174,41 @@ nyy_pitching <- nyy_pitching %>%
 
 ## Add salary column
 
+# Adjust salaries for inflation using the consumer price index (CPI)
+# Source: https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years
+
+# Clean the raw consumer price index dataset
+cpi_data <- cpi_raw %>%
+  mutate(
+    cpi = (Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) / 12
+  ) %>%
+  select(Year, cpi)
+
+# Inflation will be calculated with respect to the latest year in our dataset, 2015
+base_cpi <- cpi_data$cpi[cpi_data$Year == 2015]
+
 # Clean the salaries dataframe
 salaries <- salaries_raw %>%
+  # Filter cases to 21st century Yankees players
+  filter(yearID > 1999 & teamID == "NYA") %>%
+  # Add CPI column to dataframe
+  left_join(cpi_data, by = c("yearID" = "Year")) %>%
+  # Create a new attribute for the salary adjusted for inflation
+  mutate(
+    salary_adj = salary * (base_cpi / cpi)
+  ) %>%
+  # Round adjusted salary to the nearest dollar
+  mutate(
+    salary_adj = round(salary_adj)
+  ) %>%
   # Drop unneccessary columns
-  select(-lgID)
+  select(-lgID, -cpi)
 
-# Add salary column to batting dataframe
+# Add salary and adjusted salary column to batting dataframe
 nyy_batting <- inner_join(nyy_batting, salaries, by = c("yearID" = "yearID",
                                                         "teamID" = "teamID",
                                                         "playerID" = "playerID"))
-# Add salary column to pitching dataframe
+# Add salary and adjusted salary column to pitching dataframe
 nyy_pitching <- inner_join(nyy_pitching, salaries, by = c("yearID" = "yearID",
                                                         "teamID" = "teamID",
                                                         "playerID" = "playerID"))
