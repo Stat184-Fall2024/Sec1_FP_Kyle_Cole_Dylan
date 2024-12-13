@@ -31,15 +31,12 @@ library(ggplot2)
 #setwd("~/path/to/repo")
 
 # Read in data
-master <- read.csv("data/Master.csv")
-salaries <- read.csv("data/Salaries.csv")
-batting <- read.csv("data/Batting.csv")
-batting_post <- read.csv("data/BattingPost.csv")
-fielding <- read.csv("data/Fielding.csv")
-fielding_of <- read.csv("data/FieldingOF.csv")
-pitching <- read.csv("data/Pitching.csv")
-pitching_post <- read.csv("data/PitchingPost.csv")
-teams <- read.csv("data/Teams.csv")
+master_raw <- read.csv("data/Master.csv")
+salaries_raw <- read.csv("data/Salaries.csv")
+batting_raw <- read.csv("data/Batting.csv")
+pitching_raw <- read.csv("data/Pitching.csv")
+fielding_raw <- read.csv("data/Fielding.csv")
+teams_raw <- read.csv("data/Teams.csv")
 ```
 
 ```{r}
@@ -55,7 +52,25 @@ teams <- read.csv("data/Teams.csv")
 # https://www.baseball-reference.com/about/war_explained_position.shtml
 # https://www.baseball-reference.com/about/war_explained_pitch.shtml
 
-AVG_RUNS_PER_WIN = 10 # Constant for average number of runs per win, Baseball Reference assumes this is 10 
+# Constant for average number of runs per win, Baseball Reference assumes this is 10 
+AVG_RUNS_PER_WIN = 10
+
+# Filter teams table to 21st century
+teams <- teams_raw %>%
+  filter(yearID > 1999)
+
+# Select park factors
+teams_bpf <- teams %>%
+  select(yearID, teamID, BPF) # Batting park factor
+
+teams_ppf <- teams %>%
+  select(yearID, teamID, PPF) # Pitching park factor
+
+# Join park factors to batting and pitching tables by year and team
+batting_with_bpf <- left_join(batting_raw, teams_bpf, by = c("yearID" = "yearID",
+                                            "teamID" = "teamID"))
+pitching_with_ppf <- left_join(pitching_raw, teams_ppf, by = c("yearID" = "yearID",
+                                            "teamID" = "teamID"))
 
 # Compute the league average runs per at bat
 avg_runs_per_ab <- mean(teams$R / teams$AB)
@@ -63,7 +78,7 @@ avg_runs_per_ab <- mean(teams$R / teams$AB)
 replacement_level_runs_per_ab = avg_runs_per_ab * 0.8
 
 # Compute bWAR for 21st century Yankees hitters
-nyy_batting <- batting %>%
+nyy_batting <- batting_with_bpf %>%
   # Filter cases to 21st century Yankees players
   filter(yearID > 1999 & teamID == "NYA") %>%
   # Add columns for the WAR computation
@@ -75,17 +90,10 @@ nyy_batting <- batting %>%
     WAR = runs_above_replacement / AVG_RUNS_PER_WIN # bWAR
   ) %>%
   # Sort by descending WAR
-  arrange(desc(WAR)) %>%
-  # Drop all columns beside playerID, yearID, teamID, WAR
-  select(playerID, yearID, teamID, WAR)
+  arrange(desc(WAR))
 
-# For validation purposes, 2007 Alex Rodriguez' WAR was about 9.2
 
 ## Pitchers
-
-# Park factors: adjust for hitter friendly ballparks
-OLD_NYY_STADIUM_PF = 1.02
-NEW_NYY_STADIUM_PF = 1.04
 
 # Compute league average runs allowed per 9 innings
 lg_RA9 = (sum(teams$RA) / sum(teams$IPouts / 3)) * 9
@@ -93,21 +101,119 @@ lg_RA9 = (sum(teams$RA) / sum(teams$IPouts / 3)) * 9
 replacement_RA9 = lg_RA9 * 1.2
 
 # Compute bWAR for 21st century Yankees pitchers
-nyy_pitching <- pitching %>%
+nyy_pitching <- pitching_with_ppf %>%
   # Filter cases to 21st century Yankees players
   filter(yearID > 1999 & teamID == "NYA") %>%
   # Add columns for the WAR computation
   mutate(
     RA9 = (R / (IPouts / 3)) * 9, # runs allowed per 9 innings
-    RA9_adj = ifelse(yearID > 2008, RA9 * NEW_NYY_STADIUM_PF, RA9 * OLD_NYY_STADIUM_PF), # runs allowed per 9 innings, adjusted for home ballpark
-    WAR = (replacement_RA9 - RA9)* ((IPouts / 3) / 9) / AVG_RUNS_PER_WIN, # bWAR
+    RA9_adj = RA9 * (PPF / 100), # runs allowed per 9 innings, adjusted for home ballpark
+    WAR = (replacement_RA9 - RA9_adj) * ((IPouts / 3) / 9) / AVG_RUNS_PER_WIN, # bWAR
   ) %>%
   # Sort by descending WAR
-  arrange(desc(WAR)) %>%
-  # Drop all columns beside playerID, yearID, teamID, WAR
-  select(playerID, yearID, teamID, WAR)
+  arrange(desc(WAR))
 
 # Note: computed pitching bWAR does not take into account the "leverage" factor which scales the WAR based on if the pitcher is a starter or reliever. Thus, searches of the pitching WAR yields slightly different results.
+
+### Computing other common statistics
+
+## Position players
+
+# Compute league on base percentage (OBP)
+lg_obp = (sum(teams$H) + sum(teams$BB) + sum(teams$HBP)) / (sum(teams$AB) + sum(teams$BB) + sum(teams$HBP) + sum(teams$SF))
+# Compute league slugging percentage (SLG)
+lg_slg = ((sum(teams$H) - (sum(teams$X2B) + sum(teams$X3B) + sum(teams$HR))) + (2 * sum(teams$X2B)) + (3 * sum(teams$X3B)) + (4 * sum(teams$HR))) / sum(teams$AB)
+# Compute league on base plus slugging (OPS)
+lg_ops = lg_obp + lg_slg
+
+# Computing other statistics and add to batting dataframe
+nyy_batting <- nyy_batting %>%
+  # Add columns for extra statistics
+  mutate(
+    BA = H / AB, # batting average (BA)
+    OBP = (H + BB + HBP) / (AB + BB + HBP + SF), # on base percentage (OBP)
+    SLG = ((H - (X2B + X3B + HR)) + (2 * X2B) + (3 * X3B) + (4 * HR)) / AB, # slugging percentage (SLG)
+    OPS = OBP + SLG, # on base plus slugging (OPS)
+    OPS_plus = (100 * (OPS / lg_ops) / (BPF / 100)) # on base plus slugging with respect to the league (OPS+); 100 is league average
+  ) %>%
+  # Round columns to 2 decimal places
+  mutate(
+    WAR = round(WAR, 2),
+    BA = round(BA, 2),
+    OBP = round(OBP, 2),
+    SLG = round(SLG, 2),
+    OPS = round(OPS, 2),
+    OPS_plus = round(OPS_plus, 2),
+  ) %>%
+  # Select columns for final batting dataframe
+  select(playerID, yearID, teamID, WAR, BA, OBP, SLG, OPS, OPS_plus)
+
+## Pitchers
+
+# Computing other statistics and add to pitching dataframe
+nyy_pitching <- nyy_pitching %>%
+  # Add columns for extra statistics
+  mutate(
+    WHIP = (BB + H) / (IPouts / 3), # walks and hits per inning pitched (WHIP)
+    K_per_9 = (SO * 9) / (IPouts / 3), # strikeouts per 9 innings (K9)
+    BB_per_9 = (BB * 9) / (IPouts / 3) # walks per 9 innings (BB9)
+  ) %>%
+  # Round columns to 2 decimal places
+  mutate(
+    WAR = round(WAR, 2),
+    WHIP = round(WHIP, 2),
+    K_per_9 = round(K_per_9, 2),
+    BB_per_9 = round(BB_per_9, 2),
+  ) %>%
+  # Select columns for final pitching dataframe
+  select(playerID, yearID, teamID, WAR, ERA, WHIP, K_per_9, BB_per_9)
+
+
+### Joining tables to create the main dataframes
+
+## Add salary column
+
+# Clean the salaries dataframe
+salaries <- salaries_raw %>%
+  # Drop unneccessary columns
+  select(-lgID)
+
+# Add salary column to batting dataframe
+nyy_batting <- inner_join(nyy_batting, salaries, by = c("yearID" = "yearID",
+                                                        "teamID" = "teamID",
+                                                        "playerID" = "playerID"))
+# Add salary column to pitching dataframe
+nyy_pitching <- inner_join(nyy_pitching, salaries, by = c("yearID" = "yearID",
+                                                        "teamID" = "teamID",
+                                                        "playerID" = "playerID"))
+
+## Add position column
+
+# Clean the fielding dataframe
+fielding <- fielding_raw %>%
+  # Drop unneccessary columns
+  select(yearID, teamID, playerID, POS, G) %>%
+  # Group by IDs as these are the cases
+  group_by(yearID, teamID, playerID) %>%
+  # Filter out rows so each case only has one fielding position
+  filter(G == max(G)) %>%
+  slice(1) %>%
+  ungroup() %>%
+  # Drop column used to filter
+  select(-G)
+
+# Add position column to batting dataframe
+nyy_batting <- inner_join(nyy_batting, fielding, by = c("yearID" = "yearID",
+                                                        "teamID" = "teamID",
+                                                        "playerID" = "playerID"))
+# Add position column to pitching dataframe
+nyy_pitching <- inner_join(nyy_pitching, fielding, by = c("yearID" = "yearID",
+                                                        "teamID" = "teamID",
+                                                        "playerID" = "playerID"))
+
+# Drop all rows where players are not pitchers from pitching dataframe
+nyy_pitching <- nyy_pitching %>%
+  filter(POS == "P")
 ```
 
 **Project Description:**
