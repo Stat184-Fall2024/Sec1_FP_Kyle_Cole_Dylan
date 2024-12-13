@@ -1,6 +1,6 @@
 ---
 title: "Baseball Report"
-author: "Kyle Gilbert, Cole _, Dylan _"
+author: "Kyle Gilbert, Cole Kvasnak, Dylan _"
 highlight-style: github
 format:
   html:
@@ -27,6 +27,56 @@ library(ggplot2)
 #| label: load-datasets
 #| echo: false
 
+# Set working directory to path to repo
+#setwd("~/path/to/repo")
+
+# Read in data
+master <- read.csv("data/Master.csv")
+salaries <- read.csv("data/Salaries.csv")
+batting <- read.csv("data/Batting.csv")
+batting_post <- read.csv("data/BattingPost.csv")
+fielding <- read.csv("data/Fielding.csv")
+fielding_of <- read.csv("data/FieldingOF.csv")
+pitching <- read.csv("data/Pitching.csv")
+pitching_post <- read.csv("data/PitchingPost.csv")
+teams <- read.csv("data/Teams.csv")
+```
+
+```{r}
+#| label: data-wrangling
+#| echo: false
+
+### Computing wins above replacement (WAR)
+
+## Position players
+
+# Using Baseball Reference's definition of WAR (aka bWAR)
+
+AVG_RUNS_PER_WIN = 10 # Constant for average number of runs per win, Baseball Reference assumes this is 10 
+
+# Compute the average runs per at bat across the league
+avg_runs_per_ab <- mean(teams$R / teams$AB)
+# Replacement level is 80% of the league average
+replacement_level_runs_per_ab = avg_runs_per_ab * 0.8
+
+# Compute bWAR for 21st century Yankees players
+nyy_batting <- batting %>%
+  # Filter cases to 21st century Yankees players
+  filter(yearID > 1999 & teamID == "NYA") %>%
+  # Add columns for the WAR computation
+  mutate(
+    TB = H + X2B + 2 * X3B + 3 * HR, # total bases (TB)
+    RC = ifelse((AB + BB) > 0, (H + BB) * TB / (AB + BB), 0), # runs created (RC)
+    replacement_level_runs = replacement_level_runs_per_ab * AB, # replacement runs
+    runs_above_replacement = RC - replacement_level_runs, # runs above replacement
+    WAR = runs_above_replacement / AVG_RUNS_PER_WIN # bWAR
+  ) %>%
+  # Sort by descending WAR
+  arrange(desc(WAR)) %>%
+  # Drop all columns beside playerID, yearID, teamID, WAR
+  select(playerID, yearID, teamID, WAR)
+
+# For validation purposes, 2007 Alex Rodriguez' WAR was about 9.2
 ```
 
 **Project Description:**
@@ -88,3 +138,5 @@ The goal of this final R project is to analyze the percentage of a team's salary
     -   Does the Yankees' revenue have a stronger correlation with salary cap allocations compared to other teams?
 
     -   How does team revenue impact the overall spending strategy on players?
+
+Note: At some point in analysis, define equations for WAR
