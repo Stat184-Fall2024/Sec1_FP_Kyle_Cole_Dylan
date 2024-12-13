@@ -40,7 +40,6 @@ fielding_of <- read.csv("data/FieldingOF.csv")
 pitching <- read.csv("data/Pitching.csv")
 pitching_post <- read.csv("data/PitchingPost.csv")
 teams <- read.csv("data/Teams.csv")
-players <- read.csv("data/Player.csv")
 ```
 
 ```{r}
@@ -84,6 +83,10 @@ nyy_batting <- batting %>%
 
 ## Pitchers
 
+# Park factors: adjust for hitter friendly ballparks
+OLD_NYY_STADIUM_PF = 1.02
+NEW_NYY_STADIUM_PF = 1.04
+
 # Compute league average runs allowed per 9 innings
 lg_RA9 = (sum(teams$RA) / sum(teams$IPouts / 3)) * 9
 # Replacement level is defined as allowing 20% more runs per 9 innings than the league average
@@ -96,6 +99,7 @@ nyy_pitching <- pitching %>%
   # Add columns for the WAR computation
   mutate(
     RA9 = (R / (IPouts / 3)) * 9, # runs allowed per 9 innings
+    RA9_adj = ifelse(yearID > 2008, RA9 * NEW_NYY_STADIUM_PF, RA9 * OLD_NYY_STADIUM_PF), # runs allowed per 9 innings, adjusted for home ballpark
     WAR = (replacement_RA9 - RA9)* ((IPouts / 3) / 9) / AVG_RUNS_PER_WIN, # bWAR
   ) %>%
   # Sort by descending WAR
@@ -103,7 +107,7 @@ nyy_pitching <- pitching %>%
   # Drop all columns beside playerID, yearID, teamID, WAR
   select(playerID, yearID, teamID, WAR)
 
-# Note: computed pitching bWAR does not take into account the "leverage" factor and also is not adjusting for the ballpark. Thus, searches of the pitching WAR yields slightly different results.
+# Note: computed pitching bWAR does not take into account the "leverage" factor which scales the WAR based on if the pitcher is a starter or reliever. Thus, searches of the pitching WAR yields slightly different results.
 ```
 
 **Project Description:**
