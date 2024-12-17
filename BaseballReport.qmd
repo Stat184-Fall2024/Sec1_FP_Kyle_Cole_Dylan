@@ -259,11 +259,20 @@ nyy_batting <- inner_join(nyy_batting, master, by = c("playerID" = "playerID"))
 # Add name column to pitching dataframe
 nyy_pitching <- inner_join(nyy_pitching, master, by = c("playerID" = "playerID"))
 
+# Filter out pitchers from batting dataframe
+nyy_batting <- nyy_batting %>%
+  filter(POS != "P")
+
 # Rearrange columns
 nyy_batting <- nyy_batting %>%
   select(yearID, teamID, playerID, name, POS, WAR, BA, OBP, SLG, OPS, OPS_plus, salary, salary_adj)
 nyy_pitching <- nyy_pitching %>%
   select(yearID, teamID, playerID, name, POS, WAR, ERA, WHIP, K_per_9, BB_per_9, salary, salary_adj)
+```
+
+```{r}
+#| label: data-visualizations
+#| echo: false
 ```
 
 **Project Description:**
