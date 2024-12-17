@@ -268,11 +268,168 @@ nyy_batting <- nyy_batting %>%
   select(yearID, teamID, playerID, name, POS, WAR, BA, OBP, SLG, OPS, OPS_plus, salary, salary_adj)
 nyy_pitching <- nyy_pitching %>%
   select(yearID, teamID, playerID, name, POS, WAR, ERA, WHIP, K_per_9, BB_per_9, salary, salary_adj)
+
+# Create a team dataframe for easier data aggregation across the team for data analysis
+nyy_team <- full_join(nyy_batting, nyy_pitching, by = c("yearID" = "yearID", "teamID" = "teamID", "playerID" = "playerID", "name" = "name", "POS" = "POS", "WAR" = "WAR", "salary" = "salary", "salary_adj" = "salary_adj"))
 ```
 
 ```{r}
 #| label: data-visualizations
 #| echo: false
+
+### Individual salaries vs individual performance
+
+# Density plot of adjusted salary
+ggplot(nyy_team, aes(x = salary_adj / 1e6)) + 
+  geom_density(fill = "darkgreen", alpha = 0.5) +
+  labs(title = expression(bold("Distribution of Adjusted Annual Salaries")), x = expression(bold("Adjusted Annual Salary (in Millions $USD)")), y = expression(bold("Density"))) +
+  theme_linedraw()
+
+## Analyze correlation between salary and batting statistics
+
+# Salary_adj plotted on log scale
+
+# WAR vs Adjusted Salary
+ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = WAR)) + 
+  geom_point() + 
+  labs(title = expression(bold("Wins Above Replacement (WAR) vs Adjusted Annual Salary")),
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
+       y = expression(bold("Wins Above Replacement (WAR)"))) +
+  scale_x_continuous(
+    breaks = c(-0.5, 0, 0.5, 1, 1.5),
+    labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
+  ) +
+  theme_linedraw()
+
+# BA vs Adjusted Salary
+ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = BA)) + 
+  geom_point() + 
+  labs(title = expression(bold("Batting Average (BA) vs Adjusted Annual Salary")),
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
+       y = expression(bold("Batting Average (BA)"))) +
+  scale_x_continuous(
+    breaks = c(-0.5, 0, 0.5, 1, 1.5),
+    labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
+  ) +
+  scale_y_continuous(limits = c(0.1, 0.4)) +
+  theme_linedraw()
+
+# OPS+ vs Adjusted Salary
+ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = OPS_plus)) + 
+  geom_point() + 
+  labs(title = expression(bold("OPS+ vs Adjusted Annual Salary")),
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
+       y = expression(bold("OPS+"))) +
+  scale_x_continuous(
+    breaks = c(-0.5, 0, 0.5, 1, 1.5),
+    labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
+  ) +
+  scale_y_continuous(limits = c(25, 175)) +
+  theme_linedraw()
+
+## Analyze correlation between salary and pitching statistics
+
+# Salary_adj plotted on log scale
+
+# WAR vs Adjusted Salary
+ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = WAR)) + 
+  geom_point() + 
+  labs(title = expression(bold("Wins Above Replacement (WAR) vs Adjusted Annual Salary")),
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
+       y = expression(bold("Wins Above Replacement (WAR)"))) +
+  scale_x_continuous(
+    breaks = c(-0.5, 0, 0.5, 1, 1.5),
+    labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
+  ) +
+  theme_linedraw()
+
+# ERA vs Adjusted Salary
+ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = ERA)) + 
+  geom_point() + 
+  labs(title = expression(bold("Earned Run Average (ERA) vs Adjusted Annual Salary")),
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
+       y = expression(bold("Earned Runs Average (ERA)"))) +
+  scale_x_continuous(
+    breaks = c(-0.5, 0, 0.5, 1, 1.5),
+    labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
+  ) +
+  scale_y_continuous(limits = c(0, 12)) +
+  theme_linedraw()
+
+# WHIP vs Adjusted Salary
+ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = WHIP)) + 
+  geom_point() + 
+  labs(title = expression(bold("Walks & Hits per Inning Pitched (WHIP) vs Adjusted Annual Salary")),
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
+       y = expression(bold("Walks & Hits per Innining Pitched (WHIP)"))) +
+  scale_x_continuous(
+    breaks = c(-0.5, 0, 0.5, 1, 1.5),
+    labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
+  ) +
+  theme_linedraw()
+
+## Analyze correlations between variables
+
+# Create correlation matrix between metrics and salaries for batters and pitchers
+
+# Batters
+nyy_batting_renamed <- nyy_batting %>%
+    rename(
+    "OPS+" = "OPS_plus",
+    "Adjusted Salary" = "salary_adj"
+    )
+cor_matrix_batting <- cor(nyy_batting_renamed[, c("WAR", "BA", "OPS+", "Adjusted Salary")], use = "complete.obs")
+cor_batting_df <- as.data.frame(cor_matrix_batting) %>%
+  mutate(Variable1 = rownames(cor_matrix_batting)) %>%
+  pivot_longer(
+    cols = -Variable1,
+    names_to = "Variable2",
+    values_to = "Correlation"
+  )
+
+# Pitchers
+nyy_pitching_renamed <- nyy_pitching %>%
+    rename(
+    "Adjusted Salary" = "salary_adj"
+    )
+cor_matrix_pitching <- cor(nyy_pitching_renamed[, c("WAR", "ERA", "WHIP", "Adjusted Salary")], use = "complete.obs")
+cor_pitching_df <- as.data.frame(cor_matrix_pitching) %>%
+  mutate(Variable1 = rownames(cor_matrix_pitching)) %>%
+  pivot_longer(
+    cols = -Variable1,
+    names_to = "Variable2",
+    values_to = "Correlation"
+  )
+
+# Create heatmaps to show correlations between variables
+
+# Batters
+ggplot(cor_batting_df, aes(x = Variable1, y = Variable2, fill = Correlation)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "white", mid = "orange", high = "red", midpoint = 0) +
+  labs(title = expression(bold("Correlation Matrix")), fill = "Correlation") +
+  theme_linedraw() +
+  theme(axis.text.x = element_text(face = "bold", angle = 45, vjust = 1, hjust = 1),
+        axis.text.y = element_text(face = "bold"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+# Pitchers
+ggplot(cor_pitching_df, aes(x = Variable1, y = Variable2, fill = Correlation)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "white", mid = "orange", high = "red", midpoint = 0) +
+  labs(title = expression(bold("Correlation Matrix")), fill = "Correlation") +
+  theme_linedraw() +
+  theme(axis.text.x = element_text(face = "bold", angle = 45, vjust = 1, hjust = 1),
+        axis.text.y = element_text(face = "bold"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+# Other topics:
+# Overall team spending vs team performance
+# Spending over time vs performance over time
+# Salary by position
+
 ```
 
 **Project Description:**
