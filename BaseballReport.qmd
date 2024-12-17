@@ -1,6 +1,6 @@
 ---
 title: "Baseball Report"
-author: "Kyle Gilbert, Cole Kvasnak, Dylan _"
+author: "Kyle Gilbert, Cole Kvasnak, Dylan Van Berkel"
 highlight-style: github
 format:
   html:
@@ -18,9 +18,11 @@ editor: visual
 #| message: false
 #| echo: false
 
+# This code will be using the tidyverse style guide
+
+# Load necessary packages
 library(tidyverse)
 library(knitr)
-library(ggplot2)
 library(kableExtra)
 ```
 
@@ -28,10 +30,10 @@ library(kableExtra)
 #| label: load-datasets
 #| echo: false
 
-# Set working directory to path to repo
+# Set working directory to path to repo (uncomment if needed)
 #setwd("~/path/to/repo")
 
-# Read in data
+# Read in data -------------------------------------
 master_raw <- read.csv("data/Master.csv")
 salaries_raw <- read.csv("data/Salaries.csv")
 batting_raw <- read.csv("data/Batting.csv")
@@ -45,14 +47,14 @@ cpi_raw <- read.csv("data/CPI_data.csv")
 #| label: data-wrangling
 #| echo: false
 
-### Computing wins above replacement (WAR)
+### Computing wins above replacement (WAR) -------------------------------------
 
 ## Position players
 
-# Using Baseball Reference's definition of WAR (aka bWAR):
-# https://www.baseball-reference.com/about/war_explained.shtml
-# https://www.baseball-reference.com/about/war_explained_position.shtml
-# https://www.baseball-reference.com/about/war_explained_pitch.shtml
+# Using Baseball Reference's definition of WAR (bWAR):
+# - https://www.baseball-reference.com/about/war_explained.shtml
+# - https://www.baseball-reference.com/about/war_explained_position.shtml
+# - https://www.baseball-reference.com/about/war_explained_pitch.shtml
 
 # Constant for average number of runs per win, Baseball Reference assumes this is 10 
 AVG_RUNS_PER_WIN <- 10
@@ -69,14 +71,12 @@ teams_ppf <- teams %>%
   select(yearID, teamID, PPF) # Pitching park factor
 
 # Join park factors to batting and pitching tables by year and team
-batting_with_bpf <- left_join(batting_raw, teams_bpf, by = c("yearID" = "yearID",
-                                            "teamID" = "teamID"))
-pitching_with_ppf <- left_join(pitching_raw, teams_ppf, by = c("yearID" = "yearID",
-                                            "teamID" = "teamID"))
+batting_with_bpf <- left_join(batting_raw, teams_bpf, by = c("yearID", "teamID"))
+pitching_with_ppf <- left_join(pitching_raw, teams_ppf, by = c("yearID", "teamID"))
 
-# Compute the league average runs per at bat
+# Compute the league average runs per at-bat
 avg_runs_per_ab <- mean(teams$R / teams$AB)
-# Replacement level is defined as scoring 80% of the league average runs per at bat
+# Replacement level is defined as scoring 80% of the league average runs per at-bat
 replacement_level_runs_per_ab <- avg_runs_per_ab * 0.8
 
 # Compute bWAR for 21st century Yankees hitters
@@ -115,28 +115,25 @@ nyy_pitching <- pitching_with_ppf %>%
   # Sort by descending WAR
   arrange(desc(WAR))
 
-# Note: computed pitching bWAR does not take into account the "leverage" factor which scales the WAR based on if the pitcher is a starter or reliever. Thus, searches of the pitching WAR yields slightly different results.
-
-### Computing other common statistics
+### Computing other common statistics -------------------------------------
 
 ## Position players
 
-# Compute league on base percentage (OBP)
+# Compute league on-base percentage (OBP)
 lg_obp <- (sum(teams$H) + sum(teams$BB) + sum(teams$HBP)) / (sum(teams$AB) + sum(teams$BB) + sum(teams$HBP) + sum(teams$SF))
 # Compute league slugging percentage (SLG)
 lg_slg <- ((sum(teams$H) - (sum(teams$X2B) + sum(teams$X3B) + sum(teams$HR))) + (2 * sum(teams$X2B)) + (3 * sum(teams$X3B)) + (4 * sum(teams$HR))) / sum(teams$AB)
-# Compute league on base plus slugging (OPS)
+# Compute league on-base plus slugging (OPS)
 lg_ops <- lg_obp + lg_slg
 
-# Computing other statistics and add to batting dataframe
+# Add statistics to batting dataframe
 nyy_batting <- nyy_batting %>%
-  # Add columns for extra statistics
   mutate(
     BA = H / AB, # batting average (BA)
-    OBP = (H + BB + HBP) / (AB + BB + HBP + SF), # on base percentage (OBP)
+    OBP = (H + BB + HBP) / (AB + BB + HBP + SF), # on-base percentage (OBP)
     SLG = ((H - (X2B + X3B + HR)) + (2 * X2B) + (3 * X3B) + (4 * HR)) / AB, # slugging percentage (SLG)
-    OPS = OBP + SLG, # on base plus slugging (OPS)
-    OPS_plus = (100 * (OPS / lg_ops) / (BPF / 100)) # on base plus slugging with respect to the league (OPS+); 100 is league average
+    OPS = OBP + SLG, # on-base plus slugging (OPS)
+    OPS_plus = (100 * (OPS / lg_ops) / (BPF / 100)) # OPS+ adjusted for league
   ) %>%
   # Round columns to 3 decimal places
   mutate(
@@ -145,16 +142,14 @@ nyy_batting <- nyy_batting %>%
     OBP = round(OBP, 3),
     SLG = round(SLG, 3),
     OPS = round(OPS, 3),
-    OPS_plus = round(OPS_plus, 3),
+    OPS_plus = round(OPS_plus, 3)
   ) %>%
-  # Select columns for final batting dataframe
   select(playerID, yearID, teamID, WAR, BA, OBP, SLG, OPS, OPS_plus)
 
 ## Pitchers
 
-# Computing other statistics and add to pitching dataframe
+# Add extra statistics to pitching dataframe
 nyy_pitching <- nyy_pitching %>%
-  # Add columns for extra statistics
   mutate(
     WHIP = (BB + H) / (IPouts / 3), # walks and hits per inning pitched (WHIP)
     K_per_9 = (SO * 9) / (IPouts / 3), # strikeouts per 9 innings (K9)
@@ -165,137 +160,107 @@ nyy_pitching <- nyy_pitching %>%
     WAR = round(WAR, 3),
     WHIP = round(WHIP, 3),
     K_per_9 = round(K_per_9, 3),
-    BB_per_9 = round(BB_per_9, 3),
+    BB_per_9 = round(BB_per_9, 3)
   ) %>%
-  # Select columns for final pitching dataframe
   select(playerID, yearID, teamID, WAR, ERA, WHIP, K_per_9, BB_per_9)
 
 
-### Joining tables to create the main dataframes
+### Joining tables to create the main dataframes -------------------------------------
 
 ## Add salary column
 
-# Adjust salaries for inflation using the consumer price index (CPI)
-# Source: https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years
-
-# Clean the raw consumer price index dataset
+# Adjust salaries for inflation using CPI
 cpi_data <- cpi_raw %>%
   mutate(
     cpi = (Jan + Feb + Mar + Apr + May + Jun + Jul + Aug + Sep + Oct + Nov + Dec) / 12
   ) %>%
   select(Year, cpi)
 
-# Inflation will be calculated with respect to the latest year in our dataset, 2015
+# Base CPI is for the year 2015
 base_cpi <- cpi_data$cpi[cpi_data$Year == 2015]
 
-# Clean the salaries dataframe
+# Clean and adjust salaries for inflation
 salaries <- salaries_raw %>%
-  # Filter cases to 21st century Yankees players
   filter(yearID > 1999 & teamID == "NYA") %>%
-  # Add CPI column to dataframe
   left_join(cpi_data, by = c("yearID" = "Year")) %>%
-  # Create a new attribute for the salary adjusted for inflation
   mutate(
-    salary_adj = salary * (base_cpi / cpi)
+    salary_adj = round(salary * (base_cpi / cpi))
   ) %>%
-  # Round adjusted salary to the nearest dollar
-  mutate(
-    salary_adj = round(salary_adj)
-  ) %>%
-  # Drop unneccessary columns
   select(-lgID, -cpi)
 
-# Add salary and adjusted salary column to batting dataframe
-nyy_batting <- inner_join(nyy_batting, salaries, by = c("yearID" = "yearID",
-                                                        "teamID" = "teamID",
-                                                        "playerID" = "playerID"))
-# Add salary and adjusted salary column to pitching dataframe
-nyy_pitching <- inner_join(nyy_pitching, salaries, by = c("yearID" = "yearID",
-                                                        "teamID" = "teamID",
-                                                        "playerID" = "playerID"))
+# Add salary and adjusted salary columns to batting and pitching dataframes
+nyy_batting <- inner_join(nyy_batting, salaries, by = c("yearID", "teamID", "playerID"))
+nyy_pitching <- inner_join(nyy_pitching, salaries, by = c("yearID", "teamID", "playerID"))
 
 ## Add position column
 
 # Clean the fielding dataframe
 fielding <- fielding_raw %>%
-  # Drop unneccessary columns
   select(yearID, teamID, playerID, POS, G) %>%
-  # Group by IDs as these are the cases
   group_by(yearID, teamID, playerID) %>%
-  # Filter out rows so each case only has one fielding position
   filter(G == max(G)) %>%
   slice(1) %>%
   ungroup() %>%
-  # Drop column used to filter
   select(-G) %>%
-  # Filter cases to 21st century Yankees players
   filter(yearID > 1999 & teamID == "NYA")
 
-# Add position column to batting dataframe
-nyy_batting <- inner_join(nyy_batting, fielding, by = c("yearID" = "yearID",
-                                                        "teamID" = "teamID",
-                                                        "playerID" = "playerID"))
-# Add position column to pitching dataframe
-nyy_pitching <- inner_join(nyy_pitching, fielding, by = c("yearID" = "yearID",
-                                                        "teamID" = "teamID",
-                                                        "playerID" = "playerID"))
+# Add position column to batting and pitching dataframes
+nyy_batting <- inner_join(nyy_batting, fielding, by = c("yearID", "teamID", "playerID"))
+nyy_pitching <- inner_join(nyy_pitching, fielding, by = c("yearID", "teamID", "playerID"))
 
-# Drop all rows where players are not pitchers from pitching dataframe
+# Filter out non-pitchers from the pitching dataframe
 nyy_pitching <- nyy_pitching %>%
   filter(POS == "P")
 
 ## Add name column
 
-# Clean master dataset
+# Clean the master dataset
 master <- master_raw %>%
-  # Combine first and last name into a single column
-  mutate(
-    name = paste(nameFirst, nameLast, sep = " ")
-  ) %>%
-  # Drop all columns besides playerID and name
+  mutate(name = paste(nameFirst, nameLast, sep = " ")) %>%
   select(playerID, name)
 
-# Add name column to batting dataframe
-nyy_batting <- inner_join(nyy_batting, master, by = c("playerID" = "playerID"))
-# Add name column to pitching dataframe
+# Add name column to batting and pitching dataframes
+nyy_batting <- inner_join(nyy_batting, master, by = "playerID")
 nyy_pitching <- inner_join(nyy_pitching, master, by = c("playerID" = "playerID"))
 
 # Filter out pitchers from batting dataframe
 nyy_batting <- nyy_batting %>%
-  filter(POS != "P")
-
-# Rearrange columns
-nyy_batting <- nyy_batting %>%
+  filter(POS != "P") %>%
   select(yearID, teamID, playerID, name, POS, WAR, BA, OBP, SLG, OPS, OPS_plus, salary, salary_adj)
+
 nyy_pitching <- nyy_pitching %>%
   select(yearID, teamID, playerID, name, POS, WAR, ERA, WHIP, K_per_9, BB_per_9, salary, salary_adj)
 
 # Create a team dataframe for easier data aggregation across the team for data analysis
-nyy_team <- full_join(nyy_batting, nyy_pitching, by = c("yearID" = "yearID", "teamID" = "teamID", "playerID" = "playerID", "name" = "name", "POS" = "POS", "WAR" = "WAR", "salary" = "salary", "salary_adj" = "salary_adj"))
+nyy_team <- full_join(nyy_batting, nyy_pitching, by = c("yearID", "teamID", "playerID", "name", "POS", "WAR", "salary", "salary_adj"))
 ```
 
 ```{r}
 #| label: data-visualizations
 #| echo: false
 
-## Individual salaries vs individual performance
+## Individual salaries vs individual performance -------------------------------------
 
 # Density plot of adjusted salary
-ggplot(nyy_team, aes(x = salary_adj / 1e6)) + 
+nyy_team %>%
+  ggplot(aes(x = salary_adj / 1e6)) + 
   geom_density(fill = "lightblue", alpha = 0.5) +
-  labs(title = expression(bold("Distribution of Adjusted Annual Salaries")), x = expression(bold("Adjusted Annual Salary (in Millions $USD)")), y = expression(bold("Density"))) +
+  labs(title = expression(bold("Distribution of Adjusted Annual Salaries")), 
+       x = expression(bold("Adjusted Annual Salary (in Millions $USD)")), 
+       y = expression(bold("Density"))) +
   scale_x_continuous(
     breaks = c(0, 5, 10, 15, 20, 25, 30),
     labels = c("$0M", "$5M", "$10M", "$15M", "$20M", "$25M", "$30M")
   ) +
   theme_linedraw()
 
-## Analyze correlation between salary and batting statistics
+## Analyze correlation between salary and batting statistics ---------------------------------
 
 # Salary_adj plotted on log scale
 
 # WAR vs Adjusted Salary
-ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = WAR)) + 
+nyy_batting %>%
+  ggplot(aes(x = log10(salary_adj / 1e6), y = WAR)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("Wins Above Replacement (WAR) vs Adjusted Annual Salary")),
@@ -308,7 +273,8 @@ ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = WAR)) +
   theme_linedraw()
 
 # BA vs Adjusted Salary
-ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = BA)) + 
+nyy_batting %>%
+  ggplot(aes(x = log10(salary_adj / 1e6), y = BA)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("Batting Average (BA) vs Adjusted Annual Salary")),
@@ -322,7 +288,8 @@ ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = BA)) +
   theme_linedraw()
 
 # OPS+ vs Adjusted Salary
-ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = OPS_plus)) + 
+nyy_batting %>%
+  ggplot(aes(x = log10(salary_adj / 1e6), y = OPS_plus)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("OPS+ vs Adjusted Annual Salary")),
@@ -335,12 +302,13 @@ ggplot(nyy_batting, aes(x = log10(salary_adj / 1e6), y = OPS_plus)) +
   scale_y_continuous(limits = c(25, 175)) +
   theme_linedraw()
 
-## Analyze correlation between salary and pitching statistics
+## Analyze correlation between salary and pitching statistics -------------------------------
 
 # Salary_adj plotted on log scale
 
 # WAR vs Adjusted Salary
-ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = WAR)) + 
+nyy_pitching %>%
+  ggplot(aes(x = log10(salary_adj / 1e6), y = WAR)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("Wins Above Replacement (WAR) vs Adjusted Annual Salary")),
@@ -353,7 +321,8 @@ ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = WAR)) +
   theme_linedraw()
 
 # ERA vs Adjusted Salary
-ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = ERA)) + 
+nyy_pitching %>%
+  ggplot(aes(x = log10(salary_adj / 1e6), y = ERA)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("Earned Run Average (ERA) vs Adjusted Annual Salary")),
@@ -367,31 +336,34 @@ ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = ERA)) +
   theme_linedraw()
 
 # WHIP vs Adjusted Salary
-ggplot(nyy_pitching, aes(x = log10(salary_adj / 1e6), y = WHIP)) + 
+nyy_pitching %>%
+  ggplot(aes(x = log10(salary_adj / 1e6), y = WHIP)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("Walks & Hits per Inning Pitched (WHIP) vs Adjusted Annual Salary")),
        x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
-       y = expression(bold("Walks & Hits per Innining Pitched (WHIP)"))) +
+       y = expression(bold("Walks & Hits per Inning Pitched (WHIP)"))) +
   scale_x_continuous(
     breaks = c(-0.5, 0, 0.5, 1, 1.5),
     labels = c("$316k", "$1M", "$3.16M", "$10M", "$31.6M")
   ) +
   theme_linedraw()
 
-## Analyze correlations between variables
+## Analyze correlations between variables -------------------------------------
 
 # Create correlation matrix between metrics and salaries for batters and pitchers
 
 # Batters
 nyy_batting_renamed <- nyy_batting %>%
-    rename(
+  rename(
     "OPS+" = "OPS_plus",
     "Adjusted Salary" = "salary_adj"
-    )
-cor_matrix_batting <- cor(nyy_batting_renamed[, c("WAR", "BA", "OPS+", "Adjusted Salary")], use = "complete.obs")
-cor_batting_df <- as.data.frame(cor_matrix_batting) %>%
-  mutate(Variable1 = rownames(cor_matrix_batting)) %>%
+  )
+cor_batting_df <- nyy_batting_renamed %>%
+  select(WAR, BA, `OPS+`, `Adjusted Salary`) %>%
+  cor(use = "complete.obs") %>%
+  as.data.frame() %>%
+  mutate(Variable1 = rownames(.)) %>%
   pivot_longer(
     cols = -Variable1,
     names_to = "Variable2",
@@ -400,22 +372,25 @@ cor_batting_df <- as.data.frame(cor_matrix_batting) %>%
 
 # Pitchers
 nyy_pitching_renamed <- nyy_pitching %>%
-    rename(
+  rename(
     "Adjusted Salary" = "salary_adj"
-    )
-cor_matrix_pitching <- cor(nyy_pitching_renamed[, c("WAR", "ERA", "WHIP", "Adjusted Salary")], use = "complete.obs")
-cor_pitching_df <- as.data.frame(cor_matrix_pitching) %>%
-  mutate(Variable1 = rownames(cor_matrix_pitching)) %>%
+  )
+cor_pitching_df <- nyy_pitching_renamed %>%
+  select(WAR, ERA, WHIP, `Adjusted Salary`) %>%
+  cor(use = "complete.obs") %>%
+  as.data.frame() %>%
+  mutate(Variable1 = rownames(.)) %>%
   pivot_longer(
     cols = -Variable1,
     names_to = "Variable2",
     values_to = "Correlation"
   )
 
-# Create heatmaps to show correlations between variables
+## Create heatmaps to show correlations between variables -------------------------------------
 
 # Batters
-ggplot(cor_batting_df, aes(x = Variable1, y = Variable2, fill = Correlation)) +
+cor_batting_df %>%
+  ggplot(aes(x = Variable1, y = Variable2, fill = Correlation)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "white", mid = "lightblue", high = "darkblue", midpoint = 0) +
   labs(title = expression(bold("Correlations Between Batting Metrics")), fill = "Correlation") +
@@ -426,7 +401,8 @@ ggplot(cor_batting_df, aes(x = Variable1, y = Variable2, fill = Correlation)) +
         axis.title.y = element_blank())
 
 # Pitchers
-ggplot(cor_pitching_df, aes(x = Variable1, y = Variable2, fill = Correlation)) +
+cor_pitching_df %>%
+  ggplot(aes(x = Variable1, y = Variable2, fill = Correlation)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "white", mid = "lightblue", high = "darkblue", midpoint = 0) +
   labs(title = expression(bold("Correlations Between Pitching Metrics")), fill = "Correlation") +
@@ -436,25 +412,25 @@ ggplot(cor_pitching_df, aes(x = Variable1, y = Variable2, fill = Correlation)) +
         axis.title.x = element_blank(),
         axis.title.y = element_blank())
 
-## Spending over time vs performance over time
+## Spending over time vs performance over time -------------------------------------
 
-# Group batting by year
+# Group batting by year and summarize salary
 nyy_batting_by_year <- nyy_batting %>%
   group_by(yearID) %>%
-  summarize(batting_salary_sum = sum(salary_adj, na.rm = TRUE))
+  summarize(batting_salary_sum = sum(salary_adj, na.rm = TRUE), .groups = "drop")
 
-# Group pitching by year
+# Group pitching by year and summarize salary
 nyy_pitching_by_year <- nyy_pitching %>%
   group_by(yearID) %>%
-  summarize(pitching_salary_sum = sum(salary_adj, na.rm = TRUE))
+  summarize(pitching_salary_sum = sum(salary_adj, na.rm = TRUE), .groups = "drop")
 
-# Join batting and pitching by year
+# Join batting and pitching by year and calculate total salary
 nyy_salary_by_year <- nyy_batting_by_year %>%
   full_join(nyy_pitching_by_year, by = "yearID") %>%
   mutate(total_salary = batting_salary_sum + pitching_salary_sum)
 
 # Combine batting and pitching into a team dataframe giving salary by year
-team_peformance <- teams %>%
+team_performance <- teams %>%
   filter(teamID == "NYA") %>%
   select(yearID, teamID, W) %>%
   left_join(nyy_salary_by_year, by = "yearID") %>%
@@ -462,26 +438,27 @@ team_peformance <- teams %>%
   mutate(total_salary = total_salary / 1e6)
 
 # Plot total team wins vs team salary
-ggplot(team_peformance, aes(x = total_salary, y = W)) + 
+team_performance %>%
+  ggplot(aes(x = total_salary, y = W)) + 
   geom_point(color = "steelblue", size = 3) + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
   labs(title = expression(bold("Total Wins vs Team Salary")),
        x = expression(bold("Adjusted Team Yearly Salary (in Millions $USD)")),
        y = expression(bold("Total Wins"))) +
   theme_linedraw()
-# Shows no correlation between team salary and wins
 
-## Average Salary by Position
+## Average Salary by Position -------------------------------------
 
 # Get dataframe of salary by position
 salary_by_position <- nyy_team %>%
   group_by(POS) %>%
-  summarize(avg_salary = mean(salary_adj, na.rm = TRUE)) %>%
+  summarize(avg_salary = mean(salary_adj, na.rm = TRUE), .groups = "drop") %>%
   mutate(avg_salary = avg_salary / 1e6) %>%
   arrange(desc(avg_salary))
 
 # Create a bar chart plotting the average salaries
-ggplot(salary_by_position, aes(x = reorder(POS, -avg_salary), y = avg_salary, fill = POS)) +
+salary_by_position %>%
+  ggplot(aes(x = reorder(POS, -avg_salary), y = avg_salary, fill = POS)) +
   geom_bar(stat = "identity", fill = "steelblue", show.legend = FALSE) +
   labs(title = expression(bold("Average Annual Adjusted Salary by Position")),
        x = expression(bold("Position")),
@@ -489,19 +466,19 @@ ggplot(salary_by_position, aes(x = reorder(POS, -avg_salary), y = avg_salary, fi
   theme_linedraw() +
   theme(axis.text.x = element_text())
 
-## Over and under performers: WAR / $
+## Over and under performers: WAR / $ -------------------------------------
 
 # Over performers
 top_10_over_performers <- nyy_team %>%
   mutate(WAR_per_dollar = (WAR * 1e6) / salary_adj) %>%
   arrange(desc(WAR_per_dollar)) %>%
-  head(10)
+  slice_head(n = 10)
 
 # Under performers
 top_10_under_performers <- nyy_team %>%
-  mutate(WAR_per_dollar = (WAR * 1e6)/ salary_adj) %>%
+  mutate(WAR_per_dollar = (WAR * 1e6) / salary_adj) %>%
   arrange(WAR_per_dollar) %>%
-  head(10)
+  slice_head(n = 10)
 
 # Over performers table
 top_10_over_table <- top_10_over_performers %>%
@@ -509,9 +486,7 @@ top_10_over_table <- top_10_over_performers %>%
   kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $"),
         caption = "<b><span style='color:black;'>Top 10 Over Performers (Lowest WAR per $)</span></b>",
         digits = c(0, 0, 0, 2, 0, 2)) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "condensed", "bordered")
-  )
+  kable_styling(bootstrap_options = c("striped", "condensed", "bordered"))
 
 # Under performers table
 top_10_under_table <- top_10_under_performers %>%
@@ -519,9 +494,7 @@ top_10_under_table <- top_10_under_performers %>%
   kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $"),
         caption = "<b><span style='color:black;'>Top 10 Under Performers (Lowest WAR per $)</span></b>",
         digits = c(0, 0, 0, 2, 0, 2)) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "condensed", "bordered")
-  )
+  kable_styling(bootstrap_options = c("striped", "condensed", "bordered"))
 
 # Show tables
 top_10_over_table
