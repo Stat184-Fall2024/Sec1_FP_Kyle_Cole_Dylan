@@ -1,11 +1,12 @@
 ---
-title: "Baseball Report"
+title: "Analyzing Salary and Peformance Metrics of the New York Yankees"
+subtitle: "STAT 184 Fall 2024 Final Project"
 author: "Kyle Gilbert, Cole Kvasnak, Dylan Van Berkel"
+date: "2024-12-18"
 highlight-style: github
 format:
-  html:
-    code-fold: true
   pdf:
+    code-fold: true
     geometry: 
       - top=30mm
       - left=30mm
@@ -14,8 +15,8 @@ editor: visual
 
 ```{r}
 #| label: load-pkgs
-#| code-summary: "Packages"
 #| message: false
+#| warning: false
 #| echo: false
 
 # This code will be using the tidyverse style guide
@@ -28,6 +29,8 @@ library(kableExtra)
 
 ```{r}
 #| label: load-datasets
+#| message: false
+#| warning: false
 #| echo: false
 
 # Set working directory to path to repo (uncomment if needed)
@@ -45,6 +48,8 @@ cpi_raw <- read.csv("data/CPI_data.csv")
 
 ```{r}
 #| label: data-wrangling
+#| message: false
+#| warning: false
 #| echo: false
 
 ### Computing wins above replacement (WAR) -------------------------------------
@@ -237,12 +242,14 @@ nyy_team <- full_join(nyy_batting, nyy_pitching, by = c("yearID", "teamID", "pla
 
 ```{r}
 #| label: data-visualizations
+#| message: false
+#| warning: false
 #| echo: false
 
 ## Individual salaries vs individual performance -------------------------------------
 
 # Density plot of adjusted salary
-nyy_team %>%
+plot1 <- nyy_team %>%
   ggplot(aes(x = salary_adj / 1e6)) + 
   geom_density(fill = "lightblue", alpha = 0.5) +
   labs(title = expression(bold("Distribution of Adjusted Annual Salaries")), 
@@ -259,7 +266,7 @@ nyy_team %>%
 # Salary_adj plotted on log scale
 
 # WAR vs Adjusted Salary
-nyy_batting %>%
+plot2 <- nyy_batting %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = WAR)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -273,7 +280,7 @@ nyy_batting %>%
   theme_linedraw()
 
 # BA vs Adjusted Salary
-nyy_batting %>%
+plot3 <- nyy_batting %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = BA)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -288,7 +295,7 @@ nyy_batting %>%
   theme_linedraw()
 
 # OPS+ vs Adjusted Salary
-nyy_batting %>%
+plot4 <- nyy_batting %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = OPS_plus)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -307,7 +314,7 @@ nyy_batting %>%
 # Salary_adj plotted on log scale
 
 # WAR vs Adjusted Salary
-nyy_pitching %>%
+plot5 <- nyy_pitching %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = WAR)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -321,7 +328,7 @@ nyy_pitching %>%
   theme_linedraw()
 
 # ERA vs Adjusted Salary
-nyy_pitching %>%
+plot6 <- nyy_pitching %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = ERA)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -336,7 +343,7 @@ nyy_pitching %>%
   theme_linedraw()
 
 # WHIP vs Adjusted Salary
-nyy_pitching %>%
+plot7 <- nyy_pitching %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = WHIP)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -389,7 +396,7 @@ cor_pitching_df <- nyy_pitching_renamed %>%
 ## Create heatmaps to show correlations between variables -------------------------------------
 
 # Batters
-cor_batting_df %>%
+plot7 <- cor_batting_df %>%
   ggplot(aes(x = Variable1, y = Variable2, fill = Correlation)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "white", mid = "lightblue", high = "darkblue", midpoint = 0) +
@@ -401,7 +408,7 @@ cor_batting_df %>%
         axis.title.y = element_blank())
 
 # Pitchers
-cor_pitching_df %>%
+plot8 <- cor_pitching_df %>%
   ggplot(aes(x = Variable1, y = Variable2, fill = Correlation)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "white", mid = "lightblue", high = "darkblue", midpoint = 0) +
@@ -438,7 +445,7 @@ team_performance <- teams %>%
   mutate(total_salary = total_salary / 1e6)
 
 # Plot total team wins vs team salary
-team_performance %>%
+plot9 <- team_performance %>%
   ggplot(aes(x = total_salary, y = W)) + 
   geom_point(color = "steelblue", size = 3) + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
@@ -457,7 +464,7 @@ salary_by_position <- nyy_team %>%
   arrange(desc(avg_salary))
 
 # Create a bar chart plotting the average salaries
-salary_by_position %>%
+plot10 <- salary_by_position %>%
   ggplot(aes(x = reorder(POS, -avg_salary), y = avg_salary, fill = POS)) +
   geom_bar(stat = "identity", fill = "steelblue", show.legend = FALSE) +
   labs(title = expression(bold("Average Annual Adjusted Salary by Position")),
@@ -484,7 +491,7 @@ top_10_under_performers <- nyy_team %>%
 top_10_over_table <- top_10_over_performers %>%
   select(yearID, name, POS, WAR, salary_adj, WAR_per_dollar) %>%
   kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $"),
-        caption = "<b><span style='color:black;'>Top 10 Over Performers (Lowest WAR per $)</span></b>",
+        caption = "Top 10 Over Performers (Lowest WAR per Dollar)",
         digits = c(0, 0, 0, 2, 0, 2)) %>%
   kable_styling(bootstrap_options = c("striped", "condensed", "bordered"))
 
@@ -492,16 +499,12 @@ top_10_over_table <- top_10_over_performers %>%
 top_10_under_table <- top_10_under_performers %>%
   select(yearID, name, POS, WAR, salary_adj, WAR_per_dollar) %>%
   kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $"),
-        caption = "<b><span style='color:black;'>Top 10 Under Performers (Lowest WAR per $)</span></b>",
+        caption = "Top 10 Under Performers (Lowest WAR per Dollar)",
         digits = c(0, 0, 0, 2, 0, 2)) %>%
   kable_styling(bootstrap_options = c("striped", "condensed", "bordered"))
-
-# Show tables
-top_10_over_table
-top_10_under_table
 ```
 
-## Overview
+# Overview
 
 Overview of the project. Research questions.
 
@@ -515,17 +518,190 @@ FAIR and CARE Principles
 
 Give background information, stats used, WAR calculation definitions, etc.
 
-## Data Analysis
+# Data Analysis
 
 EDA, all plots and analysis section. Explain patterns found from the data.
 
-## Conclusion
+### Plot 1 Title
+
+Plot info
+
+```{r, fig.width=4, fig.height=2}
+#| label: print-plot1
+#| message: false
+#| warning: false
+#| echo: false
+plot1
+```
+
+Plot explanation
+
+### Plot 2 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot2
+#| message: false
+#| warning: false
+#| echo: false
+plot2
+```
+
+Plot explanation
+
+### Plot 3 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot3
+#| message: false
+#| warning: false
+#| echo: false
+plot3
+```
+
+Plot explanation
+
+### Plot 4 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot4
+#| message: false
+#| warning: false
+#| echo: false
+plot4
+```
+
+Plot explanation
+
+### Plot 5 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot5
+#| message: false
+#| warning: false
+#| echo: false
+plot5
+```
+
+Plot explanation
+
+### Plot 6 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot6
+#| message: false
+#| warning: false
+#| echo: false
+plot6
+```
+
+Plot explanation
+
+### Plot 7 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot7
+#| message: false
+#| warning: false
+#| echo: false
+plot7
+```
+
+Plot explanation
+
+### Plot 8 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot8
+#| message: false
+#| warning: false
+#| echo: false
+plot8
+```
+
+Plot explanation
+
+### Plot 9 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot9
+#| message: false
+#| warning: false
+#| echo: false
+plot9
+```
+
+Plot explanation
+
+### Plot 10 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-plot10
+#| message: false
+#| warning: false
+#| echo: false
+plot10
+```
+
+Plot explanation
+
+### Table 1 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-table1
+#| message: false
+#| warning: false
+#| echo: false
+top_10_over_table
+```
+
+Plot explanation
+
+### Table 2 Title
+
+Plot info
+
+```{r, fig.width=6, fig.height=4}
+#| label: print-table2
+#| message: false
+#| warning: false
+#| echo: false
+top_10_under_table
+```
+
+Plot explanation
+
+# Conclusion
 
 Explain results/ takeaways of the analysis. Make recommendations to the Yankees as a result of the data analysis
 
 ## References
 
 Cite sources
+
+## Code Appendix
+
+```{r codeAppend, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
 
 **#Project Description:**
 
