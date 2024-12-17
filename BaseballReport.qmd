@@ -528,6 +528,32 @@ top_10_over_table
 top_10_under_table
 ```
 
+## Overview
+
+Overview of the project. Research questions.
+
+## Datasets
+
+Explain datasets used: where did we get the data, who collected the data, for what purpose, who/ what are cases.
+
+FAIR and CARE Principles
+
+## Background
+
+Give background information, stats used, WAR calculation definitions, etc.
+
+## Data Analysis
+
+EDA, all plots and analysis section. Explain patterns found from the data.
+
+## Conclusion
+
+Explain results/ takeaways of the analysis. Make recommendations to the Yankees as a result of the data analysis
+
+## References
+
+Cite sources
+
 **#Project Description:**
 
 The goal of this final R project is to analyze the percentage of a team's salary cap allocated to specific players from 2000 to now and to explore the factors driving these players' compensation levels.
@@ -587,5 +613,3 @@ The goal of this final R project is to analyze the percentage of a team's salary
     -   Does the Yankees' revenue have a stronger correlation with salary cap allocations compared to other teams?
 
     -   How does team revenue impact the overall spending strategy on players?
-
-Note: At some point in analysis, define equations for WAR
