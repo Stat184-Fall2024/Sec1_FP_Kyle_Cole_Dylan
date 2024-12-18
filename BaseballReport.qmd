@@ -534,10 +534,10 @@ Our calculations are based on Baseball Reference's definitions for $WAR$ (aka $b
 According to Baseball Reference's definition of $bWAR$ for a position player:
 
 $$
-bWAR = \frac{RC - RC_r}{⍺}
+bWAR = \frac{RC - RC_r}{a}
 $$
 
-where $RC$ denotes runs created, $RC_r$ denotes replacement level runs created, and $⍺$ denotes a constant for the average number of runs per win. Baseball Reference approximates $⍺=10$ in their calculations.
+where $RC$ denotes runs created, $RC_r$ denotes replacement level runs created, and $a$ denotes a constant for the average number of runs per win. Baseball Reference approximates $⍺=10$ in their calculations.
 
 $RC$ can be computed using the following formula:
 
@@ -558,10 +558,10 @@ where $X2B$ denotes doubles, $X3B$ denotes triples, and $HR$ denotes home runs.
 Replacement level runs created, $RC_r$ can be computed using the following formula:
 
 $$
-RC_r = 𝛃 \times RC_l
+RC_r = b \times RC_l
 $$
 
-where $RC_l$ denotes the league average runs created and $𝛃$ denotes a constant for what replacement level is considered to be. Baseball Reference approximates $𝛃 = 0.8$, meaning that a replacement level player produces roughly 80% of the league average runs created.
+where $RC_l$ denotes the league average runs created and $𝛃$ denotes a constant for what replacement level is considered to be. Baseball Reference approximates $b = 0.8$, meaning that a replacement level player produces roughly 80% of the league average runs created.
 
 Batting average measures the proportion of at bats, $AB$, where a player will get a hit, $H$. Batting average, $BA$ can be calculated using the following formula:
 
@@ -602,10 +602,10 @@ For pitching statistics, our analysis will focus on the three metrics we conside
 WAR is calculated differently for pitchers than it is position players. According to Baseball Reference's definition of WAR for a pitcher:
 
 $$
-bWAR = \frac{(RA9_r-RA9_a)\times\frac{IP}{9}}{⍺}
+bWAR = \frac{(RA9_r-RA9_a)\times\frac{IP}{9}}{a}
 $$
 
-where $RA9_a$ is adjusted runs allowed per 9 innings, $RA9_r$ is replacement level runs allowed per 9 innings, $IP$ is innings pitched, and $⍺$ denotes a constant for the average number of runs per win. As previously mentioned, Baseball Reference assumes $⍺=10$ for their calculations.
+where $RA9_a$ is adjusted runs allowed per 9 innings, $RA9_r$ is replacement level runs allowed per 9 innings, $IP$ is innings pitched, and $a$ denotes a constant for the average number of runs per win. As previously mentioned, Baseball Reference assumes $a=10$ for their calculations.
 
 Note: Baseball Reference's official definition of $bWAR$ for a pitcher also includes a leverage factor in the computation. The leverage factor essentially scales a pitcher's $WAR$ differently depending on if they are primarily a relief pitcher or a starting pitcher. Due to the lack of that information in our dataset, and for overall simplicity, our computation will be leaving this factor out.
 
@@ -620,10 +620,10 @@ where $RA$ denotes the number of runs a pitcher allows and $PPF$ denotes the pla
 $RA9_r$, or replacement level $RA9$, can be calculated using the following formula:
 
 $$
-RA9_r = 𝛍 \times RA9_l
+RA9_r = c \times RA9_l
 $$
 
-where $RA9_l$ is the league average $RA9$ and $𝛍$ denotes a constant for what replacement level is considered to be. Baseball reference approximates $𝛍 = 1.2$, meaning that a replacement level pitcher allows roughly 20% more runs per 9 innings than the league average.
+where $RA9_l$ is the league average $RA9$ and $c$ denotes a constant for what replacement level is considered to be. Baseball reference approximates $c = 1.2$, meaning that a replacement level pitcher allows roughly 20% more runs per 9 innings than the league average.
 
 Earned run average, $ERA$ is the average number of earned runs a pitcher will allow in 9 innings. $ERA$ can be calculated using the following formula:
 
@@ -669,9 +669,7 @@ With our data now cleaned and organized, we can move forward with the analysis. 
 
 ## What does the distribution of salaries for the New York Yankees look like?
 
-Section intro: explain what we would like to discover in this research question.
-
-Density Plot of Adjusted Annual Salaries
+This research question aims to uncover the salary range, salary spread, and the skewness of the adjusted annual salary distribution. To explore this question, we have created a density plot for the adjusted annual salaries.
 
 ```{r, fig.width=5, fig.height=3}
 #| label: print-plot1
@@ -681,7 +679,13 @@ Density Plot of Adjusted Annual Salaries
 plot1
 ```
 
-Plot explanation
+We can see that the distribution of salaries is clearly skewed to the right. This makes sense as the vast majority of MLB players make close to the league minimum salary, while only the top players make top dollar.
+
+There is clear clustering around the league minimum salary, which for 2000 - 2015 ranged from \$200,000 - \$507,500.
+
+We can see that there is some clustering around the \$15 million mark. This could be the result of one contract that spans several years where each year is paid the same amount of money. Since each case is a yearly salary, all of these salaries would "stack" on top of one another, creating this cluster in the distribution.
+
+From this analysis of the salary distributions, we have taken away that most cases cluster towards the low end of the salary range. This information prompts us to use a logarithmic scale for adjusted salary in future plots, to prevent so much clustering of salaries at the lower end of the range.
 
 ## Which offensive and defensive metrics correlate the most with a player's salary?
 
@@ -861,63 +865,3 @@ Open Source Sports. *Baseball Databank*. Kaggle, 2019, <https://www.kaggle.com/d
 
 ```{r codeAppend, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
-
-**#Project Description:**
-
-The goal of this final R project is to analyze the percentage of a team's salary cap allocated to specific players from 2000 to now and to explore the factors driving these players' compensation levels.
-
-**Questions to answer:**
-
--   **Player Salary Insights**
-
-    -   How does the percentage of salary cap each player earns correlate with their performance metrics (e.g., batting average, home runs, WAR)?
-
-    -   What is the distribution of salaries across different positions (pitcher, catcher, etc.) for the Yankees compared to other teams?
-
--   **Team-Level Analysis**
-
-    -   How does the Yankees' average player salary compare to that of other MLB teams?
-
-    -   What percentage of the Yankees' salary cap is spent on top-performing players compared to the league average?
-
--   **Historical Trends**
-
-    -   How has the percentage of the salary cap allocated to top-paid players changed over the years for the Yankees and other teams?
-
-    -   Are there trends in salary allocation related to team performance in playoffs or championships?
-
--   **Position-Based Analysis**
-
-    -   Are certain positions (e.g., pitchers, shortstops) allocated a higher percentage of the salary cap across MLB teams? How does this compare with the Yankees?
-
-    -   Do players in specific positions receive more or less than their performance justifies?
-
--   **Team Strategy Insights**
-
-    -   Does a higher percentage of salary cap spent on star players correlate with better overall team performance?
-
-    -   How do the Yankees' salary allocation strategies compare to teams with similar or better performance records?
-
--   **League-Wide Comparisons**
-
-    -   How do the Yankees rank in terms of salary cap utilization efficiency compared to other MLB teams?
-
-    -   Are there any anomalies or outliers in salary allocations across the league?
-
--   **Contract Lengths and Salaries**
-
-    -   Do longer contracts for Yankees players correlate with a higher percentage of the salary cap allocation?
-
-    -   How does contract length influence the perceived value of players?
-
--   **Demographics and Salaries**
-
-    -   Are there correlations between player age, experience, or nationality and the percentage of the salary cap they receive?
-
-    -   How do rookie salaries as a percentage of salary caps compare between the Yankees and other teams?
-
--   **Revenue vs. Salaries**
-
-    -   Does the Yankees' revenue have a stronger correlation with salary cap allocations compared to other teams?
-
-    -   How does team revenue impact the overall spending strategy on players?
