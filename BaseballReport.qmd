@@ -3,6 +3,8 @@ title: "Analyzing Salary and Peformance Metrics of the New York Yankees"
 subtitle: "STAT 184 Fall 2024 Final Project"
 author: "Kyle Gilbert, Cole Kvasnak, Dylan Van Berkel"
 date: "2024-12-18"
+csl: "MLA9.csl"
+bibliography: "references.bib"
 highlight-style: github
 format:
   pdf:
@@ -347,7 +349,7 @@ plot7 <- nyy_pitching %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = WHIP)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
-  labs(title = expression(bold("Walks & Hits per Inning Pitched (WHIP) vs Adjusted Annual Salary")),
+  labs(title = expression(bold("WHIP vs Adjusted Annual Salary")),
        x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
        y = expression(bold("Walks & Hits per Inning Pitched (WHIP)"))) +
   scale_x_continuous(
@@ -471,7 +473,7 @@ top_10_under_table <- top_10_under_performers %>%
 
 # Overview
 
-When Michael Lewis published his 2003 book *Moneyball*, he changed the game of baseball forever, bringing the power of statistical analysis into the spotlight. Suddenly, it wasn't just about home runs or batting averages – it was about uncovering hidden values through data.
+When Michael Lewis [@lewis_moneyball_2003] published his 2003 book *Moneyball*, he changed the game of baseball forever, bringing the power of statistical analysis into the spotlight. Suddenly, it wasn't just about home runs or batting averages – it was about uncovering hidden values through data.
 
 Building on this legacy, our project dives into the intersection of money and performance, analyzing how salary allocations align with player performance metrics in America's pastime. Focusing exclusively on 21st century New York Yankees players - the cornerstone of Major League Baseball's (MLB) most valuable franchise - we aim to uncover insights behind the numbers that define success for the Bronx Bombers.
 
@@ -487,10 +489,9 @@ Our research intends to answer the following questions:
 
 ## Datasets
 
+For our analysis, we will be using the *Baseball Databank* dataset found on Kaggle [@opensourcesports]. This dataset has been adapted from the Sean Lahman Baseball Dataset [@lahman]. Sean Lahman is a well-respected journalist and data analyst with a passion for baseball history.
 
-For our analysis, we will be using the *Baseball Databank* dataset found on [Kaggle](https://www.kaggle.com/datasets/open-source-sports/baseball-databank). This dataset has been adapted from the Sean Lahman Baseball Dataset. Sean Lahman is a well-respected journalist and data analyst with a passion for baseball history.
-
-The Sean Lahman Baseball Dataset is a collection of historical baseball data, dating back to professional baseball's inception. The *Baseball Databank* covers the years 1871 - 2015. Sean Lahman has compiled the dataset to provide baseball researchers, analysts, and fans with a comprehensive and easily accessible database for historical baseball data.
+The Sean Lahman Baseball Dataset is a collection of historical baseball data, dating back to professional baseball's inception. The *Baseball Databank* covers the years 1871 - 2015. Sean Lahman has compiled the dataset to provide baseball researchers, analysts, and fans with a comprehensive and easily accessible database for historical baseball data [@lahman].
 
 The data provided in *Baseball Databank* abides by the FAIR principles. FAIR ensures findability: the ability to navigate to data of interest easily. The *Baseball Databank* consistently employs the camelcase naming convention for its twenty-two files. The initial word in a filename indicates the main category its data belongs to, and subsequent words describe further classifications. As a result, parsing the databank for a specific data subset is straightforward. In accordance with FAIR principles, the *Baseball Databank* dataset has enhanced ease of access. Readily available on [Kaggle](https://www.kaggle.com/datasets/open-source-sports/baseball-databank) via a shareable link, this dataset may be shared or adapted according to its Creative Commons Attribution-ShareAlike 3.0 Unported license. *Baseball Databank* stores its data in the customary CSV format type -- satisfying the interoperability FAIR principle. The corresponding Kaggle Data Card page for this dataset contains a thorough background for the data collection, a description of the tables, and an explanation of each column within the tables. These inclusions improve comprehension of the data, which is a key attribute of the reusability FAIR principle.
 
@@ -508,11 +509,9 @@ In our analysis, we will be using the following tables from the *Baseball Databa
 
 \- Teams: team statistics and ballpark data. Cases are individual franchises in a given year.
 
-##### 
-
 To supplement the *Baseball Databank* dataset, we will also be using a smaller *Consumer Price Index* dataset. This dataset provides historical consumer price index (CPI) data.
 
-The *Consumer Price Index* dataset is sourced from the Bureau of Labor Statistics. The dataset can be accessed directly from the Bureau of Labor Statistics [website](https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years). For our specific case, we have downloaded the CPI data for the years 2000 - 2015. The Bureau of Labor Statistics provides public CPI data to ensure citizens, organizations, and policymakers have access to a reliable measure of economic conditions.
+The *Consumer Price Index* dataset is sourced from the Bureau of Labor Statistics [@bureau_of_labor_statistics_consumer_2024]. The dataset can be accessed directly from the Bureau of Labor Statistics website. For our specific case, we have downloaded the CPI data for the years 2000 - 2015. The Bureau of Labor Statistics provides public CPI data to ensure citizens, organizations, and policymakers have access to a reliable measure of economic conditions.
 
 The CPI can be used to gauge inflation, which we use to adjust player salaries for inflation. The details of adjusting the players' salaries for inflation are discussed under [Methodology].
 
@@ -534,9 +533,9 @@ For batting statistics, our analysis will focus on three metrics we consider to 
 
 WAR is an advanced metric that essentially measures how many wins an individual player contributes to their team with respect to a replacement level player.
 
-Our calculations are based on Baseball Reference's definitions for $WAR$ (aka $bWAR$). Metrics such as $WAR$ can be calculated differently depending on the use case.
+Our calculations are based on Baseball Reference's definitions [@warexpl] for $WAR$ (aka $bWAR$). Metrics such as $WAR$ can be calculated differently depending on the use case.
 
-According to Baseball Reference's definition of $bWAR$ for a position player:
+According to Baseball Reference's definition of $bWAR$ for a position player [@position]:
 
 $$
 bWAR = \frac{RC - RC_r}{a}
@@ -604,7 +603,7 @@ where $OPS_l$ denotes the league average $OPS$.
 
 For pitching statistics, our analysis will focus on the three metrics we consider to be the most indicative of a player's success at the mound: wins above replacement (WAR), earned run average (ERA), and walks and hits per inning pitched (WHIP).
 
-WAR is calculated differently for pitchers than it is position players. According to Baseball Reference's definition of WAR for a pitcher:
+WAR is calculated differently for pitchers than it is position players. According to Baseball Reference's definition of WAR for a pitcher [@pitcher]:
 
 $$
 bWAR = \frac{(RA9_r-RA9_a)\times\frac{IP}{9}}{a}
@@ -612,7 +611,7 @@ $$
 
 where $RA9_a$ is adjusted runs allowed per 9 innings, $RA9_r$ is replacement level runs allowed per 9 innings, $IP$ is innings pitched, and $a$ denotes a constant for the average number of runs per win. As previously mentioned, Baseball Reference assumes $a=10$ for their calculations.
 
-Note: Baseball Reference's official definition of $bWAR$ for a pitcher also includes a leverage factor in the computation. The leverage factor essentially scales a pitcher's $WAR$ differently depending on if they are primarily a relief pitcher or a starting pitcher. Due to the lack of that information in our dataset, and for overall simplicity, our computation will be leaving this factor out.
+Note: Baseball Reference's official definition [@pitcher] of $bWAR$ for a pitcher also includes a leverage factor in the computation. The leverage factor essentially scales a pitcher's $WAR$ differently depending on if they are primarily a relief pitcher or a starting pitcher. Due to the lack of that information in our dataset, and for overall simplicity, our computation will be leaving this factor out.
 
 $RA9_a$ can be computed using the following formula:
 
@@ -646,7 +645,7 @@ $$
 
 where $BB$ is total walks allowed and $H$ is total hits allowed.
 
-For more information on baseball statistics, please refer to Baseball Reference under [references].
+For more information on baseball statistics, please refer to Baseball Reference [@warexpl].
 
 ## Methodology
 
@@ -850,23 +849,14 @@ Table explanation
 
 Explain results/ takeaways of the analysis. Possibly make recommendations to the Yankees as a result of the data analysis
 
-## References
+\pagebreak
 
-Bureau of Labor Statistics. *Consumer Price Index for All Urban Consumers (CPI-U)*. U.S. Department of Labor, <https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years>. Accessed 18 December 2024.
+# References
 
-Lahman, Sean. *Sean Lahman Baseball Database.* Version 2023, SeanLahman.com, 2023, <http://seanlahman.com>. Accessed 18 December 2024.
+::: {#refs}
+:::
 
-Lewis, Michael. *Moneyball: The Art of Winning an Unfair Game.* W.W. Norton & Company, 2003.
-
-Open Source Sports. *Baseball Databank*. Kaggle, 2019, <https://www.kaggle.com/datasets/open-source-sports/baseball-databank>. Accessed 18 December 2024.
-
-"Pitcher WAR Calculations and Details." *Baseball Reference,* Sports Reference, <https://www.baseball-reference.com/about/war_explained_pitch.shtml>. Accessed 18 December 2024.
-
-"Position Player WAR Calculations and Details." *Baseball Reference,* Sports Reference, <https://www.baseball-reference.com/about/war_explained_position.shtml>. Accessed 18 December 2024.
-
-"WAR Explained." *Baseball Reference,* Sports Reference, <https://www.baseball-reference.com/about/war_explained.shtml>. Accessed 18 December 2024.
-
-## Code Appendix
+# Code Appendix
 
 ```{r codeAppend, ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
