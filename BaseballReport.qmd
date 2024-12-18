@@ -506,15 +506,47 @@ top_10_under_table <- top_10_under_performers %>%
 
 # Overview
 
-Overview of the project. Research questions.
+When Michael Lewis published his 2003 book *Moneyball*, he changed the game of baseball forever, bringing the power of statistical analysis into the spotlight. Suddenly, it wasn't just about home runs or batting averages – it was about uncovering hidden value through data.
+
+Building on this legacy, our project dives into the intersection of money and performance, analyzing how salary allocations align with player performance metrics in America's pastime. Focusing exclusively on 21st century New York Yankees players - the cornerstone of Major League Baseball's (MLB) most valuable franchise - we aim to uncover insights behind the numbers that define success for the Bronx Bombers.
+
+Our research intends to answer the following questions:
+
+(research questions)
 
 ## Datasets
 
-Explain datasets used: where did we get the data, who collected the data, for what purpose, who/ what are cases.
+For our analysis, we will be using the *Baseball Databank* dataset found on [Kaggle](https://www.kaggle.com/datasets/open-source-sports/baseball-databank). This dataset has been adapted from the Sean Lahman Baseball Dataset. Sean Lahman is a well-respected journalist and data analyst with a passion for baseball history.
+
+The Sean Lahman Baseball Dataset is a collection of historical baseball data, dating back to professional baseball's inception. The *Baseball Databank* covers the years 1871 - 2015. Sean Lahman has compiled the dataset to provide baseball researchers, analysts, and fans with a comprehensive and easily accessible database for historical baseball data.
+
+In our analysis, we will be using the following tables from the *Baseball Databank*:
+
+\- Master: player names, DOB, biographical info. Cases are individual players.
+
+\- Batting: batting statistics. Cases are individual players on a certain team in a given year.
+
+\- Pitching: pitching statistics. Cases are individual players on a certain team in a given year.
+
+\- Fielding: fielding statistics and player positions. Cases are individual players on a certain team in a given year.
+
+\- Salaries: player salaries. Cases are individual players on a certain team in a given year.
+
+\- Teams: team statistics and ballpark data. Cases are individual franchises in a given year.
+
+To supplement the *Baseball Databank* dataset, we will also be using a smaller *Consumer Price Index* dataset. This dataset provides historical consumer price index (CPI) data.
+
+The *Consumer Price Index* dataset is sourced from the Bureau of Labor Statistics. The dataset can be accessed directly from the Bureau of Labor Statistics [website](https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years). For our specific case, we have downloaded the CPI data for the years 2000 - 2015. The Bureau of Labor Statistics provides public CPI data to ensure citizens, organizations, and policymakers have access to a reliable measure of economic conditions.
+
+The CPI can be used to gauge inflation, which we use to adjust player salaries for inflation. The details of adjusting the players' salaries for inflation are discussed under [Background & Methodology].
+
+In our analysis, we will be using the following table from the *Consumer Price Index* dataset:
+
+\- CPI: consumer price index. Cases are represented by a specific year.
 
 FAIR and CARE Principles
 
-## Background
+## Background & Methodology
 
 Give background information, stats used, WAR calculation definitions, etc.
 
@@ -526,7 +558,7 @@ EDA, all plots and analysis section. Explain patterns found from the data.
 
 Plot info
 
-```{r, fig.width=4, fig.height=2}
+```{r, fig.width=6, fig.height=4}
 #| label: print-plot1
 #| message: false
 #| warning: false
@@ -696,7 +728,15 @@ Explain results/ takeaways of the analysis. Make recommendations to the Yankees 
 
 ## References
 
-Cite sources
+Kaggle baseball databank
+
+Sean Lahman baseball dataset
+
+Bureau of Labor Statistics CPI dataset
+
+Baseball reference WAR blog
+
+Moneyball by Michael Lewis
 
 ## Code Appendix
 
