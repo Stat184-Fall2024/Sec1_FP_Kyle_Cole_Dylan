@@ -554,11 +554,127 @@ FAIR and CARE Principles
 
 ## Background
 
-Give background information, stats used, WAR calculation definitions, etc.
+Baseball statistics provide a way to quantify an individual player's or team's success by comparing them to other players and teams in the league. There are a wide range of baseball statistics used in analysis of professional baseball. Our analysis will be focusing on two primary categories of statistics: batting statistics and pitching statistics.
 
-Baseball statistics provide a way to quantify an individual player's or team's success by comparing them to other players and teams in the league. There are a wide range of baseball statistics used in.
+### Batting Statistics
 
-Our analysis will be focusing on two primary categories of statistics: batting statistics and pitching statistics.
+For batting statistics, our analysis will focus on four metrics we consider to be the most indicative of a player's success at the plate: wins above replacement (WAR), batting average (BA), on base plus slugging (OPS), and normalized on base plus slugging (OPS+).
+
+WAR is an advanced metric that essentially measures how many wins an individual player contributes to their team with respect to a replacement level player.
+
+Our calculations are based on Baseball Reference's definitions for WAR (aka bWAR). Metrics such as WAR can be calculated differently depending on the use case.
+
+According to Baseball Reference's definition of $bWAR$ for a position player:
+
+$$
+bWAR = \frac{RC - RC_r}{⍺}
+$$
+
+where $RC$ denotes runs created, $RC_r$ denotes replacement level runs created, and $⍺$ denotes a constant for the average number of runs per win. Baseball reference approximates $⍺=10$ in their calculations.
+
+$RC$ can be computed using the following formula:
+
+$$
+RC = \frac{(H + BB) * TB}{AB + BB}
+$$
+
+where $H$ denotes hits, $BB$ denotes walks, $TB$ denotes total bases, and $AB$ denotes at bats.
+
+$TB$ is calculated using the following formula:
+
+$$
+TB = H + 2 \times X2B + 3 \times X3B + 4 \times HR
+$$
+
+where $X2B$ denotes doubles, $X3B$ denotes triples, and $HR$ denotes home runs.
+
+Replacement level runs created, $RC_r$ can be computed using the following formula:
+
+$$
+RC_r = 𝛃 \times RC_l
+$$
+
+where $RC_l$ denotes the league average runs created and $𝛃$ denotes a constant for what replacement level is considered to be. Baseball reference approximates $𝛃 = 0.8$, meaning that a replacement level player produces roughly 80% of the league average runs created.
+
+Batting average measures the proportion of at bats, $AB$, where a player will get a hit, $H$. Batting average, $BA$ can be calculated using the following formula:
+
+$$
+BA = \frac{H}{AB}
+$$
+
+On base plus slugging, $OPS$ is the sum of two other baseball statistics:
+
+$$
+OPS = OBP + SLG
+$$
+
+where $OBP$ denotes on base percentage and $SLG$ denotes slugging percentage. These metrics can be calculated using the following formulas:
+
+$$
+OBP = \frac{H + BB + HBP}{AB + BB + HBP + SF}
+$$
+
+$$
+SLG = \frac{TB}{AB}
+$$
+
+where $HBP$ denotes hit by pitches and $SF$ denotes sacrifice flies.
+
+Normalized on base plus slugging, $OPS+$, is essentially $OPS$ normalized to the league average. An $OPS+$ of $100$ denotes the league average. $OPS+$ can be computed with the following formula:
+
+$$
+OPS+ = \frac{OPS}{OPS_l}
+$$
+
+where $OPS_l$ denotes the league average $OPS$.
+
+### Pitching Statistics
+
+For pitching statistics, our analysis will focus on the three metrics we consider to be the most indicative of a player's success at the mound: wins above replacement (WAR), earned run average (ERA), and walks and hits per inning pitched (WHIP).
+
+WAR is calculated differently for pitchers than it is position players. According to Baseball Reference's definition of WAR for a pitcher:
+
+$$
+bWAR = \frac{(RA9_r-RA9_a)\times\frac{IP}{9}}{⍺}
+$$
+
+where $RA9_a$ is adjusted runs allowed per 9 innings, $RA9_r$ is replacement level runs allowed per 9 innings, $IP$ is innings pitched, and $⍺$ denotes a constant for the average number of runs per win. As previously mentioned, Baseball Reference assumes $⍺=10$ for their calculations.
+
+Note: Baseball Reference's official definition of $bWAR$ for a pitcher also includes a leverage factor in the computation. The leverage factor essentially scales a pitcher's $WAR$ differently depending on if they are primarily a relief pitcher or a starting pitcher. Due to the lack of that information in our dataset, and for overall simplicity, our computation will be leaving this factor out.
+
+$RA9_a$ can be computed using the following formula:
+
+$$
+RA9 = \frac{RA}{IP}\times9\times PPF
+$$
+
+where $RA$ denotes the number of runs a pitcher allows and $PPF$denotes the player's home ballpark pitching park factor. The pitching park factor essentially weighs some ballparks differently, due to the inconsistent size of field of play among MLB ballparks.
+
+$RA9_r$, or replacement level $RA9$, can be calculated using the following formula:
+
+$$
+RA9_r = 𝛍 \times RA9_l
+$$
+
+where $RA9_l$ is the league average $RA9$ and $𝛍$ denotes a constant for what replacement level is considered to be. Baseball reference approximates $𝛍 = 1.2$, meaning that a replacement level pitcher allows roughly 20% more runs per 9 innings than the league average.
+
+Earned run average, $ERA$ is the average number of earned runs a pitcher will allow in 9 innings. $ERA$ can be calculated using the following formula:
+
+$$
+ERA = \frac{ER}{IP}\times9
+$$
+
+where $ER$ denotes earned runs.
+
+Walks and hits per inning pitched, $WHIP$ is average number of walks and hits a pitcher will allow in an inning. $WHIP$ can be computed using the following formula:
+
+$$
+WHIP = \frac{BB + H}{IP}
+$$
+
+where $BB$ is total walks allowed and $H$ is total hits allowed.
+
+For more information on baseball statistics, please refer to Baseball Reference under [references].
 
 ## Methodology
 
