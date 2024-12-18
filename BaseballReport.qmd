@@ -270,7 +270,7 @@ plot2 <- nyy_batting %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = WAR)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
-  labs(title = expression(bold("Wins Above Replacement (WAR) vs Adjusted Annual Salary")),
+  labs(title = expression(bold("WAR vs Adjusted Annual Salary")),
        x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
        y = expression(bold("Wins Above Replacement (WAR)"))) +
   scale_x_continuous(
@@ -284,7 +284,7 @@ plot3 <- nyy_batting %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = BA)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
-  labs(title = expression(bold("Batting Average (BA) vs Adjusted Annual Salary")),
+  labs(title = expression(bold("BA vs Adjusted Annual Salary")),
        x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
        y = expression(bold("Batting Average (BA)"))) +
   scale_x_continuous(
@@ -318,7 +318,7 @@ plot5 <- nyy_pitching %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = WAR)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
-  labs(title = expression(bold("Wins Above Replacement (WAR) vs Adjusted Annual Salary")),
+  labs(title = expression(bold("WAR vs Adjusted Annual Salary")),
        x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
        y = expression(bold("Wins Above Replacement (WAR)"))) +
   scale_x_continuous(
@@ -332,7 +332,7 @@ plot6 <- nyy_pitching %>%
   ggplot(aes(x = log10(salary_adj / 1e6), y = ERA)) + 
   geom_point(color = "steelblue") + 
   geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
-  labs(title = expression(bold("Earned Run Average (ERA) vs Adjusted Annual Salary")),
+  labs(title = expression(bold("ERA vs Adjusted Annual Salary")),
        x = expression(bold("Adjusted Annual Salary (in Millions $USD)")),
        y = expression(bold("Earned Runs Average (ERA)"))) +
   scale_x_continuous(
@@ -396,11 +396,11 @@ cor_pitching_df <- nyy_pitching_renamed %>%
 ## Create heatmaps to show correlations between variables -------------------------------------
 
 # Batters
-plot7 <- cor_batting_df %>%
+plot8 <- cor_batting_df %>%
   ggplot(aes(x = Variable1, y = Variable2, fill = Correlation)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "white", mid = "lightblue", high = "darkblue", midpoint = 0) +
-  labs(title = expression(bold("Correlations Between Batting Metrics")), fill = "Correlation") +
+  labs(title = expression(bold("Batting Correlation Matrix")), fill = "Correlation") +
   theme_linedraw() +
   theme(axis.text.x = element_text(face = "bold"),
         axis.text.y = element_text(face = "bold"),
@@ -408,51 +408,16 @@ plot7 <- cor_batting_df %>%
         axis.title.y = element_blank())
 
 # Pitchers
-plot8 <- cor_pitching_df %>%
+plot9 <- cor_pitching_df %>%
   ggplot(aes(x = Variable1, y = Variable2, fill = Correlation)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "white", mid = "lightblue", high = "darkblue", midpoint = 0) +
-  labs(title = expression(bold("Correlations Between Pitching Metrics")), fill = "Correlation") +
+  labs(title = expression(bold("Pitching Correlation Matrix")), fill = "Correlation") +
   theme_linedraw() +
   theme(axis.text.x = element_text(face = "bold"),
         axis.text.y = element_text(face = "bold"),
         axis.title.x = element_blank(),
         axis.title.y = element_blank())
-
-## Spending over time vs performance over time -------------------------------------
-
-# Group batting by year and summarize salary
-nyy_batting_by_year <- nyy_batting %>%
-  group_by(yearID) %>%
-  summarize(batting_salary_sum = sum(salary_adj, na.rm = TRUE), .groups = "drop")
-
-# Group pitching by year and summarize salary
-nyy_pitching_by_year <- nyy_pitching %>%
-  group_by(yearID) %>%
-  summarize(pitching_salary_sum = sum(salary_adj, na.rm = TRUE), .groups = "drop")
-
-# Join batting and pitching by year and calculate total salary
-nyy_salary_by_year <- nyy_batting_by_year %>%
-  full_join(nyy_pitching_by_year, by = "yearID") %>%
-  mutate(total_salary = batting_salary_sum + pitching_salary_sum)
-
-# Combine batting and pitching into a team dataframe giving salary by year
-team_performance <- teams %>%
-  filter(teamID == "NYA") %>%
-  select(yearID, teamID, W) %>%
-  left_join(nyy_salary_by_year, by = "yearID") %>%
-  select(yearID, teamID, W, total_salary) %>%
-  mutate(total_salary = total_salary / 1e6)
-
-# Plot total team wins vs team salary
-plot9 <- team_performance %>%
-  ggplot(aes(x = total_salary, y = W)) + 
-  geom_point(color = "steelblue", size = 3) + 
-  geom_smooth(method = "lm", se = FALSE, color = "black", linetype = "solid") +
-  labs(title = expression(bold("Total Wins vs Team Salary")),
-       x = expression(bold("Adjusted Team Yearly Salary (in Millions $USD)")),
-       y = expression(bold("Total Wins"))) +
-  theme_linedraw()
 
 ## Average Salary by Position -------------------------------------
 
@@ -490,16 +455,16 @@ top_10_under_performers <- nyy_team %>%
 # Over performers table
 top_10_over_table <- top_10_over_performers %>%
   select(yearID, name, POS, WAR, salary_adj, WAR_per_dollar) %>%
-  kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $"),
-        caption = "Top 10 Over Performers (Lowest WAR per Dollar)",
+  kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $M"),
+        caption = "Top 10 Over Performers (Lowest WAR per Million Dollars)",
         digits = c(0, 0, 0, 2, 0, 2)) %>%
   kable_styling(bootstrap_options = c("striped", "condensed", "bordered"))
 
 # Under performers table
 top_10_under_table <- top_10_under_performers %>%
   select(yearID, name, POS, WAR, salary_adj, WAR_per_dollar) %>%
-  kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $"),
-        caption = "Top 10 Under Performers (Lowest WAR per Dollar)",
+  kable(col.names = c("Year", "Player", "Position", "WAR", "Salary ($USD)", "WAR / $M"),
+        caption = "Top 10 Under Performers (Lowest WAR per Million Dollars)",
         digits = c(0, 0, 0, 2, 0, 2)) %>%
   kable_styling(bootstrap_options = c("striped", "condensed", "bordered"))
 ```
@@ -554,7 +519,9 @@ FAIR and CARE Principles
 
 ## Background
 
-Baseball statistics provide a way to quantify an individual player's or team's success by comparing them to other players and teams in the league. There are a wide range of baseball statistics used in analysis of professional baseball. Our analysis will be focusing on two primary categories of statistics: batting statistics and pitching statistics.
+Baseball statistics provide a way to quantify an individual player's or team's success by comparing them to other players and teams in the league. In this section, we will go over the statistics we have chosen to focus our analysis on, and provide the mathematical definition for each.
+
+There are a variety of statistics used in analysis of professional baseball, ranging from as simple as $H$ and $HR$ to advanced sabermetrics like $wOBA$. Our analysis will be focusing on a few of the statistics we find most effective in quantifying a player's success, broken up into two primary categories: batting statistics and pitching statistics.
 
 ### Batting Statistics
 
@@ -570,7 +537,7 @@ $$
 bWAR = \frac{RC - RC_r}{⍺}
 $$
 
-where $RC$ denotes runs created, $RC_r$ denotes replacement level runs created, and $⍺$ denotes a constant for the average number of runs per win. Baseball reference approximates $⍺=10$ in their calculations.
+where $RC$ denotes runs created, $RC_r$ denotes replacement level runs created, and $⍺$ denotes a constant for the average number of runs per win. Baseball Reference approximates $⍺=10$ in their calculations.
 
 $RC$ can be computed using the following formula:
 
@@ -594,7 +561,7 @@ $$
 RC_r = 𝛃 \times RC_l
 $$
 
-where $RC_l$ denotes the league average runs created and $𝛃$ denotes a constant for what replacement level is considered to be. Baseball reference approximates $𝛃 = 0.8$, meaning that a replacement level player produces roughly 80% of the league average runs created.
+where $RC_l$ denotes the league average runs created and $𝛃$ denotes a constant for what replacement level is considered to be. Baseball Reference approximates $𝛃 = 0.8$, meaning that a replacement level player produces roughly 80% of the league average runs created.
 
 Batting average measures the proportion of at bats, $AB$, where a player will get a hit, $H$. Batting average, $BA$ can be calculated using the following formula:
 
@@ -678,19 +645,21 @@ For more information on baseball statistics, please refer to Baseball Reference 
 
 ## Methodology
 
-Describe how data was transformed from raw form to feature rich data.
+In this section, we outline the methodology used to transform raw data into feature-rich datasets suitable for analysis. This process involved data cleaning, wrangling, and deriving new features from the datasets.
+
+(explain code in data-wrangling block)
 
 # Data Analysis
 
-EDA, all plots and analysis section. Explain patterns found from the data.
+With our data now cleaned and organized, we can move forward with the analysis. To address our research questions effectively, we have developed a series of visualizations. This section is structured around each research question, with a focused analysis for each.
 
 ## What does the distribution of salaries for the New York Yankees look like?
 
-### Plot 1 Title
+Section intro: explain what we would like to discover in this research question.
 
-Plot info
+Density Plot of Adjusted Annual Salaries
 
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot1
 #| message: false
 #| warning: false
@@ -702,11 +671,13 @@ Plot explanation
 
 ## Which offensive and defensive metrics correlate the most with a player's salary?
 
-### Plot 2 Title
+Section intro: explain what we would like to discover in this research question.
 
-Plot info
+### Offensive Metrics:
 
-```{r, fig.width=6, fig.height=4}
+Correlation between WAR and Adjusted Annual Salary
+
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot2
 #| message: false
 #| warning: false
@@ -716,11 +687,9 @@ plot2
 
 Plot explanation
 
-### Plot 3 Title
+Correlation between BA and Adjusted Annual Salary
 
-Plot info
-
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot3
 #| message: false
 #| warning: false
@@ -730,11 +699,9 @@ plot3
 
 Plot explanation
 
-### Plot 4 Title
+Correlation between OPS+ and Adjusted Annual Salary
 
-Plot info
-
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot4
 #| message: false
 #| warning: false
@@ -744,11 +711,11 @@ plot4
 
 Plot explanation
 
-### Plot 5 Title
+### Defensive Metrics:
 
-Plot info
+Correlation between WAR and Adjusted Annual Salary
 
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot5
 #| message: false
 #| warning: false
@@ -758,11 +725,9 @@ plot5
 
 Plot explanation
 
-### Plot 6 Title
+Correlation between ERA and Adjusted Annual Salary
 
-Plot info
-
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot6
 #| message: false
 #| warning: false
@@ -772,11 +737,9 @@ plot6
 
 Plot explanation
 
-### Plot 7 Title
+Correlation between WHIP and Adjusted Annual Salary
 
-Plot info
-
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot7
 #| message: false
 #| warning: false
@@ -786,11 +749,11 @@ plot7
 
 Plot explanation
 
-### Plot 8 Title
+### Summary/ Heatmaps
 
-Plot info
+Heatmap of batting metrics
 
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot8
 #| message: false
 #| warning: false
@@ -800,11 +763,9 @@ plot8
 
 Plot explanation
 
-### Plot 9 Title
+Heatmap of pitching metrics
 
-Plot info
-
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-plot9
 #| message: false
 #| warning: false
@@ -816,11 +777,11 @@ Plot explanation
 
 ## What is the salary breakdown across different positions? In other words, which positions get paid the most and least?
 
-### Plot 10 Title
+Section intro: explain what we would like to discover in this research question.
 
-Plot info
+Bar chart of Average Annual Adjusted Salary grouped by Position
 
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=4}
 #| label: print-plot10
 #| message: false
 #| warning: false
@@ -832,11 +793,13 @@ Plot explanation
 
 ## Which players provided the most and least value per dollar they were paid? In other words, who were the top over performers and top under performers?
 
-### Table 1 Title
+Section intro: explain what we would like to discover in this research question.
 
-Table info
+### Over Performers
 
-```{r, fig.width=6, fig.height=4}
+Table of top 10 players in WAR per Million \$USD
+
+```{r, fig.width=5, fig.height=3}
 #| label: print-table1
 #| message: false
 #| warning: false
@@ -846,11 +809,11 @@ top_10_over_table
 
 Table explanation
 
-### Table 2 Title
+### Under Performers
 
-Table info
+Table of top 10 players in WAR per Million \$USD
 
-```{r, fig.width=6, fig.height=4}
+```{r, fig.width=5, fig.height=3}
 #| label: print-table2
 #| message: false
 #| warning: false
@@ -862,19 +825,23 @@ Table explanation
 
 # Conclusion
 
-Explain results/ takeaways of the analysis. Make recommendations to the Yankees as a result of the data analysis
+Explain results/ takeaways of the analysis. Possibly make recommendations to the Yankees as a result of the data analysis
 
 ## References
 
-Kaggle baseball databank
+Bureau of Labor Statistics. *Consumer Price Index for All Urban Consumers (CPI-U)*. U.S. Department of Labor, <https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years>. Accessed 18 December 2024.
 
-Sean Lahman baseball dataset
+Lahman, Sean. *Sean Lahman Baseball Database.* Version 2023, SeanLahman.com, 2023, <http://seanlahman.com>. Accessed 18 December 2024.
 
-Bureau of Labor Statistics CPI dataset
+Lewis, Michael. *Moneyball: The Art of Winning an Unfair Game.* W.W. Norton & Company, 2003.
 
-Baseball reference WAR blog
+Open Source Sports. *Baseball Databank*. Kaggle, 2019, <https://www.kaggle.com/datasets/open-source-sports/baseball-databank>. Accessed 18 December 2024.
 
-Moneyball by Michael Lewis
+"Pitcher WAR Calculations and Details." *Baseball Reference,* Sports Reference, <https://www.baseball-reference.com/about/war_explained_pitch.shtml>. Accessed 18 December 2024.
+
+"Position Player WAR Calculations and Details." *Baseball Reference,* Sports Reference, <https://www.baseball-reference.com/about/war_explained_position.shtml>. Accessed 18 December 2024.
+
+"WAR Explained." *Baseball Reference,* Sports Reference, <https://www.baseball-reference.com/about/war_explained.shtml>. Accessed 18 December 2024.
 
 ## Code Appendix
 
