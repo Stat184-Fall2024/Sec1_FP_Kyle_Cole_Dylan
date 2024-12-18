@@ -558,11 +558,11 @@ Baseball statistics provide a way to quantify an individual player's or team's s
 
 ### Batting Statistics
 
-For batting statistics, our analysis will focus on four metrics we consider to be the most indicative of a player's success at the plate: wins above replacement (WAR), batting average (BA), on base plus slugging (OPS), and normalized on base plus slugging (OPS+).
+For batting statistics, our analysis will focus on four metrics we consider to be the most indicative of a player's success at the plate: wins above replacement $WAR$ , batting average $BA$, on base plus slugging $OPS$, and normalized on base plus slugging $OPS+$.
 
 WAR is an advanced metric that essentially measures how many wins an individual player contributes to their team with respect to a replacement level player.
 
-Our calculations are based on Baseball Reference's definitions for WAR (aka bWAR). Metrics such as WAR can be calculated differently depending on the use case.
+Our calculations are based on Baseball Reference's definitions for $WAR$ (aka $bWAR$). Metrics such as $WAR$ can be calculated differently depending on the use case.
 
 According to Baseball Reference's definition of $bWAR$ for a position player:
 
