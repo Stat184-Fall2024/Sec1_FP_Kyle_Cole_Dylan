@@ -512,7 +512,13 @@ Building on this legacy, our project dives into the intersection of money and pe
 
 Our research intends to answer the following questions:
 
-(research questions)
+\- What does the distribution of salaries for the New York Yankees look like?
+
+\- Which offensive and defensive metrics correlate the most with a player's salary?
+
+\- What is the salary breakdown across different positions? In other words, which positions get paid the most and least?
+
+\- Which players provided the most and least value per dollar they were paid? In other words, who were the top over performers and top under performers?
 
 ## Datasets
 
@@ -538,7 +544,7 @@ To supplement the *Baseball Databank* dataset, we will also be using a smaller *
 
 The *Consumer Price Index* dataset is sourced from the Bureau of Labor Statistics. The dataset can be accessed directly from the Bureau of Labor Statistics [website](https://data.bls.gov/timeseries/CUUR0000SA0?years_option=all_years). For our specific case, we have downloaded the CPI data for the years 2000 - 2015. The Bureau of Labor Statistics provides public CPI data to ensure citizens, organizations, and policymakers have access to a reliable measure of economic conditions.
 
-The CPI can be used to gauge inflation, which we use to adjust player salaries for inflation. The details of adjusting the players' salaries for inflation are discussed under [Background & Methodology].
+The CPI can be used to gauge inflation, which we use to adjust player salaries for inflation. The details of adjusting the players' salaries for inflation are discussed under [Methodology].
 
 In our analysis, we will be using the following table from the *Consumer Price Index* dataset:
 
@@ -546,13 +552,23 @@ In our analysis, we will be using the following table from the *Consumer Price I
 
 FAIR and CARE Principles
 
-## Background & Methodology
+## Background
 
 Give background information, stats used, WAR calculation definitions, etc.
+
+Baseball statistics provide a way to quantify an individual player's or team's success by comparing them to other players and teams in the league. There are a wide range of baseball statistics used in.
+
+Our analysis will be focusing on two primary categories of statistics: batting statistics and pitching statistics.
+
+## Methodology
+
+Describe how data was transformed from raw form to feature rich data.
 
 # Data Analysis
 
 EDA, all plots and analysis section. Explain patterns found from the data.
+
+## What does the distribution of salaries for the New York Yankees look like?
 
 ### Plot 1 Title
 
@@ -567,6 +583,8 @@ plot1
 ```
 
 Plot explanation
+
+## Which offensive and defensive metrics correlate the most with a player's salary?
 
 ### Plot 2 Title
 
@@ -680,6 +698,8 @@ plot9
 
 Plot explanation
 
+## What is the salary breakdown across different positions? In other words, which positions get paid the most and least?
+
 ### Plot 10 Title
 
 Plot info
@@ -694,9 +714,11 @@ plot10
 
 Plot explanation
 
+## Which players provided the most and least value per dollar they were paid? In other words, who were the top over performers and top under performers?
+
 ### Table 1 Title
 
-Plot info
+Table info
 
 ```{r, fig.width=6, fig.height=4}
 #| label: print-table1
@@ -706,11 +728,11 @@ Plot info
 top_10_over_table
 ```
 
-Plot explanation
+Table explanation
 
 ### Table 2 Title
 
-Plot info
+Table info
 
 ```{r, fig.width=6, fig.height=4}
 #| label: print-table2
@@ -720,7 +742,7 @@ Plot info
 top_10_under_table
 ```
 
-Plot explanation
+Table explanation
 
 # Conclusion
 
