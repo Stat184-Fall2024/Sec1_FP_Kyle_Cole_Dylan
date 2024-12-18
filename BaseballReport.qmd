@@ -525,7 +525,7 @@ There are a variety of statistics used in analysis of professional baseball, ran
 
 ### Batting Statistics
 
-For batting statistics, our analysis will focus on four metrics we consider to be the most indicative of a player's success at the plate: wins above replacement $WAR$ , batting average $BA$, on base plus slugging $OPS$, and normalized on base plus slugging $OPS+$.
+For batting statistics, our analysis will focus on three metrics we consider to be the most indicative of a player's success at the plate: wins above replacement $WAR$ , batting average $BA$, and normalized on base plus slugging $OPS+$.
 
 WAR is an advanced metric that essentially measures how many wins an individual player contributes to their team with respect to a replacement level player.
 
@@ -542,7 +542,7 @@ where $RC$ denotes runs created, $RC_r$ denotes replacement level runs created, 
 $RC$ can be computed using the following formula:
 
 $$
-RC = \frac{(H + BB) * TB}{AB + BB}
+RC = \frac{(H + BB) \times TB}{AB + BB}
 $$
 
 where $H$ denotes hits, $BB$ denotes walks, $TB$ denotes total bases, and $AB$ denotes at bats.
@@ -590,7 +590,7 @@ where $HBP$ denotes hit by pitches and $SF$ denotes sacrifice flies.
 Normalized on base plus slugging, $OPS+$, is essentially $OPS$ normalized to the league average. An $OPS+$ of $100$ denotes the league average. $OPS+$ can be computed with the following formula:
 
 $$
-OPS+ = \frac{OPS}{OPS_l}
+OPS+ = \frac{OPS}{OPS_l} \times 100
 $$
 
 where $OPS_l$ denotes the league average $OPS$.
@@ -612,10 +612,10 @@ Note: Baseball Reference's official definition of $bWAR$ for a pitcher also incl
 $RA9_a$ can be computed using the following formula:
 
 $$
-RA9 = \frac{RA}{IP}\times9\times PPF
+RA9_a = \frac{RA}{IP}\times9\times PPF
 $$
 
-where $RA$ denotes the number of runs a pitcher allows and $PPF$denotes the player's home ballpark pitching park factor. The pitching park factor essentially weighs some ballparks differently, due to the inconsistent size of field of play among MLB ballparks.
+where $RA$ denotes the number of runs a pitcher allows and $PPF$ denotes the player's home ballpark pitching park factor. The pitching park factor essentially weighs some ballparks differently, due to the inconsistent size of field of play among MLB ballparks.
 
 $RA9_r$, or replacement level $RA9$, can be calculated using the following formula:
 
@@ -645,9 +645,23 @@ For more information on baseball statistics, please refer to Baseball Reference 
 
 ## Methodology
 
-In this section, we outline the methodology used to transform raw data into feature-rich datasets suitable for analysis. This process involved data cleaning, wrangling, and deriving new features from the datasets.
+In this section, we outline the methodology used to transform raw data into feature-rich dataframes suitable for analysis. This process involved data cleaning, wrangling, and deriving new features from the datasets.
 
-(explain code in data-wrangling block)
+The data cleaning process started by taking our raw data tables directly from the CSV files. From these raw tables, we filtered out only the cases that we would need for our analysis: 21st century Yankees players.
+
+Next, we needed to take the raw data, which was in the form of stats that can be recorded directly from a game ($H$, $BB$, $HR$) and transform it into statistics that are more indicative of a player's success ($WAR$, $BA$, $OPS+$). This was the majority of the data wrangling process due to the complexity of some of the formulas, as mentioned in the previous section.
+
+The other major form of data wrangling involved adjusting player salaries for inflation. Adjusting player salaries for inflation ensures that . Since we will be comparing salaries to player performance metrics, we do not want players from later years to be unfairly evaluated, simply because of the depreciating value of the US dollar.
+
+Player salaries were scaled using the Consumer Price Index, $CPI$, a metric used to gauge inflation, based on the following formula:
+
+$$
+S_a = S \times \frac{CPI_b}{CPI}
+$$
+
+where $S_a$ denotes the salary adjusted for inflation, $S$ denotes the raw salary, $CPI$ denotes the Consumer Price Index in the year of the salary, and $CPI_b$ denotes a constant for the baseline $CPI$. $CPI_b$ essentially is the $CPI$ for the year in which all salaries will be scaled to. For our analysis, $CPI_b$ will be set to the $CPI$ value in 2015, the most recent year of our dataset.
+
+Throughout this process, tables were joined together using the yearIDs, teamIDs, and playerIDs.
 
 # Data Analysis
 
