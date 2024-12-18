@@ -471,7 +471,7 @@ top_10_under_table <- top_10_under_performers %>%
 
 # Overview
 
-When Michael Lewis published his 2003 book *Moneyball*, he changed the game of baseball forever, bringing the power of statistical analysis into the spotlight. Suddenly, it wasn't just about home runs or batting averages – it was about uncovering hidden value through data.
+When Michael Lewis published his 2003 book *Moneyball*, he changed the game of baseball forever, bringing the power of statistical analysis into the spotlight. Suddenly, it wasn't just about home runs or batting averages – it was about uncovering hidden values through data.
 
 Building on this legacy, our project dives into the intersection of money and performance, analyzing how salary allocations align with player performance metrics in America's pastime. Focusing exclusively on 21st century New York Yankees players - the cornerstone of Major League Baseball's (MLB) most valuable franchise - we aim to uncover insights behind the numbers that define success for the Bronx Bombers.
 
@@ -490,6 +490,8 @@ Our research intends to answer the following questions:
 For our analysis, we will be using the *Baseball Databank* dataset found on [Kaggle](https://www.kaggle.com/datasets/open-source-sports/baseball-databank). This dataset has been adapted from the Sean Lahman Baseball Dataset. Sean Lahman is a well-respected journalist and data analyst with a passion for baseball history.
 
 The Sean Lahman Baseball Dataset is a collection of historical baseball data, dating back to professional baseball's inception. The *Baseball Databank* covers the years 1871 - 2015. Sean Lahman has compiled the dataset to provide baseball researchers, analysts, and fans with a comprehensive and easily accessible database for historical baseball data.
+
+The data provided in *Baseball Databank* abides by the FAIR principles. FAIR ensures findability: the ability to navigate to data of interest easily. The *Baseball Databank* consistently employs the camelcase naming convention for its twenty-two files. The initial word in a filename indicates the main category its data belongs to, and subsequent words describe further classifications. As a result, parsing the databank for a specific data subset is straightforward. In accordance with FAIR principles, the *Baseball Databank* dataset has enhanced ease of access. Readily available on Kaggle or via a shareable link, this dataset may be shared or adapted according to its Creative Commons Attribution-ShareAlike 3.0 Unported license. *Baseball Databank* stores its data in the customary CSV format type -- satisfying the interoperability FAIR principle. The corresponding Kaggle Data Card page for this dataset contains a thorough background for the data collection, a description of the tables, and an explanation of each column within the tables. These inclusions improve comprehension of the data, which is a key attribute of the reusability FAIR principle.
 
 In our analysis, we will be using the following tables from the *Baseball Databank*:
 
@@ -514,8 +516,6 @@ The CPI can be used to gauge inflation, which we use to adjust player salaries f
 In our analysis, we will be using the following table from the *Consumer Price Index* dataset:
 
 \- CPI: consumer price index. Cases are represented by a specific year.
-
-FAIR and CARE Principles
 
 ## Background
 
