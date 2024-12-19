@@ -673,9 +673,11 @@ With our data now cleaned and organized, we can move forward with the analysis. 
 
 ## What does the distribution of salaries for the New York Yankees look like?
 
-This research question aims to uncover the salary range, salary spread, and the skewness of the adjusted annual salary distribution. To explore this question, we have created a density plot for the adjusted annual salaries.
+This research question aims to uncover the salary range, salary spread, and the skewness of the adjusted annual salary distribution.
 
-```{r, fig.width=5, fig.height=3}
+To explore this question, Figure 1 shows a density plot for the adjusted annual salaries.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Density plot showing salary distribution"}
 #| label: print-plot1
 #| message: false
 #| warning: false
@@ -693,13 +695,13 @@ From this analysis of the salary distributions, we have taken away that most cas
 
 ## Which offensive and defensive metrics correlate the most with a player's salary?
 
-Section intro: explain what we would like to discover in this research question.
+This research question aims to uncover which performance metrics correlate the most with a player's annual earnings. This section will be divided into three parts, [Offensive Metrics], [Defensive Metrics], and a [Summary]
 
-### Offensive Metrics:
+### Offensive Metrics
 
-Correlation between WAR and Adjusted Annual Salary
+Figure 2 will look at the correlation between $WAR$ and adjusted annual salary, plotted on a logarithmic scale.
 
-```{r, fig.width=5, fig.height=3}
+```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of WAR vs Salary"}
 #| label: print-plot2
 #| message: false
 #| warning: false
@@ -707,11 +709,15 @@ Correlation between WAR and Adjusted Annual Salary
 plot2
 ```
 
-Plot explanation
+When analyzing the plot between $WAR$ and annual salary, it can be seen that there is a very strong positive correlation between $WAR$ and what a player is being paid. It is evident that players who have higher $WAR$ values contribute more to their teams success, therefore they have higher earnings. The majority of the players with a $WAR$ greater than 5 are paid above \$10 million dollars annually showing that they are paid well on the offensive side.
 
-Correlation between BA and Adjusted Annual Salary
+There is also extremely high variability when $WAR$ gets lower, some players with extremely low $WAR$ are still getting paid millions and millions of dollars. Why is this? Some of these factors include long term contracts, or the fact that they are very experienced in their specific position. Some players who have $WAR$ values over 3 are getting paid under a million dollars, showing those players may be undervalued.
 
-```{r, fig.width=5, fig.height=3}
+As will be further explored in [summary], when looking at the relationships between the offensive stats analyzed, $WAR$ has the highest positive correlation out of the three, showing that players who can win for their team will generally get paid more.
+
+Figure 3 will look at the correlation between $BA$ and adjusted annual salary, plotted on a logarithmic scale.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of BA vs Salary"}
 #| label: print-plot3
 #| message: false
 #| warning: false
@@ -719,11 +725,13 @@ Correlation between BA and Adjusted Annual Salary
 plot3
 ```
 
-Plot explanation
+Looking at this plot it is evident that there is a positive correlation between batting average and annual salary, but not a clear correlation. Players who have a higher batting average generally do get paid more, but the correlation isn't overly strong.
 
-Correlation between OPS+ and Adjusted Annual Salary
+There is also lots of variability between players and their batting averages. There are many outliers that when looking at just batting average, it does not justify what a player is being paid. For example, one player has a batting average of about .400 and is only getting paid about \$500,000, yet another player with a batting average at around .150 is getting paid roughly \$25,000,000. These outliers, among others, show that other factors must be having a stronger effect on salary.
 
-```{r, fig.width=5, fig.height=3}
+Figure 4 will look at the correlation between $OPS+$ and adjusted annual salary, plotted on a logarithmic scale.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of OPS+ vs Salary"}
 #| label: print-plot4
 #| message: false
 #| warning: false
@@ -731,13 +739,15 @@ Correlation between OPS+ and Adjusted Annual Salary
 plot4
 ```
 
-Plot explanation
+When looking at the correlation between $OPS+$ and adjusted annual salary, it can be observed that there is a positive correlation. As expected, players with higher $OPS+$ values generally do get paid more than with lower $OPS+$ values. We observe that many players with $OPS+$ values higher than 100, which is the league average, make between \$10M and \$31.6M dollars, showing that those players are rewarded.
 
-### Defensive Metrics:
+There also seems to be lots of undervaluation, for $OPS+$, compared to other metrics: many players close to 100 or even just above 100 are not getting paid nearly as much as their counterparts, when having very similar stats.
 
-Correlation between WAR and Adjusted Annual Salary
+### Defensive Metrics
 
-```{r, fig.width=5, fig.height=3}
+Figure 5 will look at the correlation between $WAR$ and adjusted annual salary, plotted on a logarithmic scale.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of WAR vs Salary"}
 #| label: print-plot5
 #| message: false
 #| warning: false
@@ -745,11 +755,15 @@ Correlation between WAR and Adjusted Annual Salary
 plot5
 ```
 
-Plot explanation
+When looking at $WAR$ for pitchers, there definitely is a positive correlation, but there much more spread between values, as compared to $WAR$ for position players. As $WAR$ increases, generally so does salary for pitchers.
 
-Correlation between ERA and Adjusted Annual Salary
+Pitchers with a $WAR$ over 2.5 generally make the most, showing that elite players are properly compensated. Pitchers with $WAR$ close to 0 have an extremely wide variety of salaries ranging all the way from the lowest to even the highest salaries on the graph. This exemplifies that pitchers get paid for many other reasons, other than just $WAR$.
 
-```{r, fig.width=5, fig.height=3}
+In other words, higher $WAR$ for pitchers generally means higher compensation, but lower $WAR$ does not necessarily mean lower compensation.
+
+Figure 6 will look at the correlation between $ERA$ and adjusted annual salary, plotted on a logarithmic scale.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of ERA vs Salary"}
 #| label: print-plot6
 #| message: false
 #| warning: false
@@ -757,11 +771,15 @@ Correlation between ERA and Adjusted Annual Salary
 plot6
 ```
 
-Plot explanation
+The first thing that is evident from this plot is the fact that $ERA$ and adjusted annual salary actually has a negative correlation. This is due to the fact that a lower $ERA$ value means that a pitcher allows less runs, and as a result, they make more money.
 
-Correlation between WHIP and Adjusted Annual Salary
+However, there are still many players that make millions even though their $ERA$ is over 5, possibly due to the fact that these players have much more experience, better past performance, or contracts which influence what the pitcher is being paid.
 
-```{r, fig.width=5, fig.height=3}
+There is also lots of variability in this plot, which may account for other factors, so the next the plot will be evaluated to see if more findings can be uncovered.
+
+Figure 7 will look at the correlation between $WHIP$ and adjusted annual salary, plotted on a logarithmic scale.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of WHIP vs Salary"}
 #| label: print-plot7
 #| message: false
 #| warning: false
@@ -769,13 +787,19 @@ Correlation between WHIP and Adjusted Annual Salary
 plot7
 ```
 
-Plot explanation
+Similar to $ERA$, it is also evident that the correlation between $WHIP$ and adjusted annual salary plot is negative. Lower $WHIP$ indicates less walks and hits, and therefore fewer baserunners allowed.
 
-### Summary/ Heatmaps
+For pitchers with $WHIP$ between 1.3 and 1.8, salaries vary drastically. This indicates that $WHIP$ is not a sole predictor of a pitcher’s salary. Some pitchers with $WHIP$ over 2.0 (which is not good) still get paid very well. Why could this be the case? Some factors are that the pitchers may have small sample size, a large contract spanning years, or the fact that they are a veteran pitcher.
 
-Heatmap of batting metrics
+Most pitchers with a $WHIP$ below 1.0 are paid extremely well showing great compensation for these pitchers skillset.
 
-```{r, fig.width=5, fig.height=3}
+### Summary
+
+This section will summarize the correlations found between the various performance metrics and average annual salary.
+
+Figure 8 is a heat map showing the correlations between the various batting performance metrics.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Heat Map of Batting Metrics"}
 #| label: print-plot8
 #| message: false
 #| warning: false
@@ -783,11 +807,17 @@ Heatmap of batting metrics
 plot8
 ```
 
-Plot explanation
+The batting correlation matrix provides a visual summary of relationships between offensive performance and adjusted annual salary.
 
-Heatmap of pitching metrics
+The strongest correlation with adjusted annual salary, as alluded to previously, is with $WAR$, showing that $WAR$ is a good measure of a players contributions and value to their team.
 
-```{r, fig.width=5, fig.height=3}
+$OPS+$ also shows a positive correlation with adjusted annual salary, showing that players with higher offensive production are often compensated for their contributions.
+
+$BA$ has the weakest correlation with average annual salary among the group, showing that teams now prioritize $WAR$ and $OPS+$ over how well a player can hit. When looking at the shift in modern baseball analytics, it can be seen that $WAR$ and $OPS+$ are the preferred indicators of a players overall value.
+
+Figure 9 is a heat map showing the correlations between the various pitching performance metrics.
+
+```{r, fig.width=5, fig.height=3, fig.cap="Heat Map of Pitching Metrics"}
 #| label: print-plot9
 #| message: false
 #| warning: false
@@ -795,15 +825,19 @@ Heatmap of pitching metrics
 plot9
 ```
 
-Plot explanation
+The pitching correlation matrix provides a visual summary of relationships between all pitching factors and adjusted salary. Darker blue indicates a strong correlation whereas lighter blue indicates weaker or negative correlations.
 
-## What is the salary breakdown across different positions? In other words, which positions get paid the most and least?
+It is evident that there is a positive correlation (around 0.5) between $WAR$ and adjusted annual salary, showing that higher $WAR$ values contribute more to higher payouts and team success. Both $ERA$ and $WHIP$ have negative correlations to adjusted annual salary, which makes sense due to the fact that as a pitcher, when you lower the amount of runners on bases, you are doing a better job. While $ERA$ is important, having a weaker correlation shows that $ERA$ is a less reliable factor when looking at a pitcher’s contributions.
 
-Section intro: explain what we would like to discover in this research question.
+From all of this analysis, we can conclude that $WAR$ is the best predictor of a player's annual adjusted salary.
 
-Bar chart of Average Annual Adjusted Salary grouped by Position
+## What is the salary breakdown across different positions?
 
-```{r, fig.width=5, fig.height=4}
+This section seeks to uncover which positions the New York Yankees pay the most and least.
+
+Figure 10 shows the average annual adjusted salary for players of a certain position group.
+
+```{r, fig.width=5, fig.height=4, fig.cap="Bar Graph of Salary by Position"}
 #| label: print-plot10
 #| message: false
 #| warning: false
@@ -811,17 +845,21 @@ Bar chart of Average Annual Adjusted Salary grouped by Position
 plot10
 ```
 
-Plot explanation
+When looking at a player's average salary based on position, it can be seen that right field (RF) and third base (3B) have the highest average salary at around \$15 million for both positions. This may be because these positions are usually filled with players who contribute heavily to a teams offense: home run hitters and run producers.
 
-## Which players provided the most and least value per dollar they were paid? In other words, who were the top over performers and top under performers?
+Analyzing the positions with mid-tier salaries, it can be seen that positions like center field (CF), shortstop (SS), and first base (1B) get paid between \$11 and \$13 million dollars a year. These positions may be valued highly due to shortstops having a duel role providing strong defense and contributing offensively, and center fielders being very athletic, having good fielding abilities, and speed.
 
-Section intro: explain what we would like to discover in this research question.
+The positions with lower tier salaries is where this analysis gets interesting. Seeing pitchers (P) with much lower average salaries is eye opening, considering pitching is crucial to a team's success. Players with positions such as catcher (C) and 2nd baseman (2B), have more defensive contributions rather than offensive, which may be why they are paid less. 
+
+## Which players provided the most and least value per dollar they were paid?
+
+In this section, we hope to uncover who the top 10 over and under performers on the New York Yankees from 2000 - 2015. In previous analysis, we concluded that $WAR$ was the best predictor of performance for both a hitter and pitcher, so to evaluate these players will use $WAR$ per million dollars.
 
 ### Over Performers
 
-Table of top 10 players in WAR per Million \$USD
+Table 1 shows the top 10 New York Yankees players in WAR per million dollars from 2000 - 2015.
 
-```{r, fig.width=5, fig.height=3}
+```{r, fig.width=5, fig.height=3, fig.cap="Table showing top 10 players for WAR / $M"}
 #| label: print-table1
 #| message: false
 #| warning: false
@@ -833,9 +871,9 @@ Table explanation
 
 ### Under Performers
 
-Table of top 10 players in WAR per Million \$USD
+Table 2 shows the bottom 10 New York Yankees players in WAR per million dollars from 2000 - 2015.
 
-```{r, fig.width=5, fig.height=3}
+```{r, fig.width=5, fig.height=3, fig.cap="Table showing bottom 10 players for WAR / $M"}
 #| label: print-table2
 #| message: false
 #| warning: false
@@ -855,6 +893,8 @@ Explain results/ takeaways of the analysis. Possibly make recommendations to the
 
 ::: {#refs}
 :::
+
+\pagebreak
 
 # Code Appendix
 
