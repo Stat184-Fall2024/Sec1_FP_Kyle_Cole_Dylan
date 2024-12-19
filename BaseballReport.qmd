@@ -857,7 +857,7 @@ In this section, we hope to uncover who the top 10 over and under performers on 
 
 ### Over Performers
 
-Table 1 shows the top 10 New York Yankees players in WAR per million dollars from 2000 - 2015.
+Table 1 shows the top 10 New York Yankees players in $WAR$ per million dollars from 2000 - 2015.
 
 ```{r, fig.width=5, fig.height=3, fig.cap="Table showing top 10 players for WAR / $M"}
 #| label: print-table1
@@ -867,11 +867,15 @@ Table 1 shows the top 10 New York Yankees players in WAR per million dollars fro
 top_10_over_table
 ```
 
-Table explanation
+When looking at the top 10 over performers list of Yankees from 2000-2015, it is evident that pitchers dominate the list. 7 out of the top 10 over performers are pitchers. This may suggest that underdeveloped or young pitchers out perform what is expected of them during their rookie contracts or before free agency.
+
+It can be observed that Chien-Ming Wang was a huge over performer having back to back entries on this where in 2006 his $WAR$ per million dollars was 10.29, and in 2007 his $WAR$ per million dollars was 6.86. Robinson Cano and Dellin Betances were also great over performers both appearing twice on this list.
+
+All players on this list made less than \$590,000 dollars and over performed greatly all having $WAR$ per million dollars values over 6.00. This highlights the value of players in their earlier contracts when starting out and shows how teams have a huge financial advantage during the pre-arbitration years. This also shows how teams can pay players much less to have them develop skills that will take their game to the next level.
 
 ### Under Performers
 
-Table 2 shows the bottom 10 New York Yankees players in WAR per million dollars from 2000 - 2015.
+Table 2 shows the bottom 10 New York Yankees players in $WAR$ per million dollars from 2000 - 2015.
 
 ```{r, fig.width=5, fig.height=3, fig.cap="Table showing bottom 10 players for WAR / $M"}
 #| label: print-table2
@@ -881,11 +885,27 @@ Table 2 shows the bottom 10 New York Yankees players in WAR per million dollars 
 top_10_under_table
 ```
 
-Table explanation
+All players on this list have negative $WAR$ which is an awful performance. It can be observed that all players only appear once on this list, likely because when underperforming at this level, a player will likely be released from the team after that season.
+
+Pitchers also dominate this list with 8 out of the 10 players being pitchers. This is because pitchers are more likely prone to under perform due to small sample sizes, injuries, or poor outings by them which impact their $WAR$. There is only one catcher on this list which means if his $WAR$ was that poor that his defensive contributions negatively affected the team. From looking at the players salaries these players were likely early in their careers and still under performed significantly. One player, Phil Hughes, was a great prospect and failed to meet his expectations, which are the risks a team may have when paying someone so young when they arent fully developed.
 
 # Conclusion
 
-Explain results/ takeaways of the analysis. Possibly make recommendations to the Yankees as a result of the data analysis
+This section caps off our analysis of the New York Yankees’ salary and performance data and reveals the following trends in player valuation and resource allocation:
+
+The salary distribution of the New York Yankees from 2000-2015 was skewed to the right, with most salaries being close to the league minimum.
+
+$WAR$ has the best positive correlation with the adjusted salary of the players, this means that the players who produce the most $WAR$ to the team receive the largest pay. The players with high $WAR$ values and especially those with $WAR$ above 5, earn more than 10 million dollars a year, and contrasts with the lower $WAR$ values which are more variable with the salary, which may be due to factors such as long term contracts or experience.
+
+Other metrics such as $OPS+$ also correlate well with adjusted annual salary, as they show the increasing focus on the advanced statistical data. $BA$, on the other hand, has a low correlation coefficient, as it shows that there is the decreasing emphasis on the conventional statistics.
+
+As for the pitchers, their $ERA$ and $WHIP$ are negatively correlated with the salary; this means that those with better control, and who do not allow many baserunners to the opposition (lower $WHIP$) earn more, on average. Nevertheless, the differences in the salaries of pitchers with equal or close to equal $WHIP$ and $ERA$ indicate that there are other factors, including the experience of the pitcher or the terms of the contract. The correlation matrices also agree with this notion that $WAR$ is the best predictor of a player’s salary for hitters, while $WHIP$ is slightly better for pitchers.
+
+When the players are classified by their positions, then offensive minded players who play in right field (RF) and third base (3B) earn the maximum amount of money whereas the defensive players who are catchers (C) or second basemen (2B) earn relatively less. It was observed that pitchers (P) had lower average salaries even though they are considered to be very vital in the team, which may be as a result of the wide variation in the salaries of the pitching staff or the abundance of arms on a team.
+
+The list of top overperformers presents the value of young players on the team’s control: Chien-Ming Wang, Betances, and Cano. Underperformers (who mainly were pitchers) show how in risky the unproven early players stage or those their careers who were affected by injuries are.
+
+In general, the Yankees effectively reward the best players, according to $WAR$, while at the same time, utilizing cheap young players they have secured on rookie deals. However, underperformance shows that the problem of player assessment on small sample sizes and then signing long-term contracts is still present.
 
 \pagebreak
 
