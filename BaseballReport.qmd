@@ -487,13 +487,17 @@ Our research intends to answer the following questions:
 
 \- Which players provided the most and least value per dollar they were paid? In other words, who were the top over performers and top under performers?
 
+\pagebreak
+
 ## Datasets
 
-For our analysis, we will be using the *Baseball Databank* dataset found on Kaggle [@opensourcesports]. This dataset has been adapted from the Sean Lahman Baseball Dataset [@lahman]. Sean Lahman is a well-respected journalist and data analyst with a passion for baseball history.
+For our analysis, we will be using the *Baseball Databank* dataset found on Kaggle [@open_source_sports_baseball_2019]. This dataset has been adapted from the Sean Lahman Baseball Dataset [@lahman_sean_2023]. Sean Lahman is a well-respected journalist and data analyst with a passion for baseball history.
 
-The Sean Lahman Baseball Dataset is a collection of historical baseball data, dating back to professional baseball's inception. The *Baseball Databank* covers the years 1871 - 2015. Sean Lahman has compiled the dataset to provide baseball researchers, analysts, and fans with a comprehensive and easily accessible database for historical baseball data [@lahman].
+The Sean Lahman Baseball Dataset is a collection of historical baseball data, dating back to professional baseball's inception. The *Baseball Databank* covers the years 1871 - 2015. Sean Lahman has compiled the dataset to provide baseball researchers, analysts, and fans with a comprehensive and easily accessible database for historical baseball data [@lahman_sean_2023].
 
-The data provided in *Baseball Databank* abides by the FAIR principles. FAIR ensures findability: the ability to navigate to data of interest easily. The *Baseball Databank* consistently employs the camelcase naming convention for its twenty-two files. The initial word in a filename indicates the main category its data belongs to, and subsequent words describe further classifications. As a result, parsing the databank for a specific data subset is straightforward. In accordance with FAIR principles, the *Baseball Databank* dataset has enhanced ease of access. Readily available on Kaggle [@opensourcesports] via a shareable link, this dataset may be shared or adapted according to its Creative Commons Attribution-ShareAlike 3.0 Unported license. *Baseball Databank* stores its data in the customary CSV format type -- satisfying the interoperability FAIR principle. The corresponding Kaggle Data Card page for this dataset contains a thorough background for the data collection, a description of the tables, and an explanation of each column within the tables. These inclusions improve comprehension of the data, which is a key attribute of the reusability FAIR principle.
+The data provided in *Baseball Databank* abides by the FAIR principles. FAIR ensures findability: the ability to navigate to data of interest easily. The *Baseball Databank* consistently employs the camelcase naming convention for its twenty-two files. The initial word in a filename indicates the main category its data belongs to, and subsequent words describe further classifications. As a result, parsing the databank for a specific data subset is straightforward. In accordance with FAIR principles, the *Baseball Databank* dataset has enhanced ease of access. Readily available on Kaggle [@open_source_sports_baseball_2019] via a shareable link, this dataset may be shared or adapted according to its Creative Commons Attribution-ShareAlike 3.0 Unported license.
+
+*Baseball Databank* stores its data in the customary CSV format type -- satisfying the interoperability FAIR principle. The corresponding Kaggle Data Card page for this dataset contains a thorough background for the data collection, a description of the tables, and an explanation of each column within the tables. These inclusions improve comprehension of the data, which is a key attribute of the reusability FAIR principle.
 
 In our analysis, we will be using the following tables from the *Baseball Databank*:
 
@@ -533,9 +537,9 @@ For batting statistics, our analysis will focus on three metrics we consider to 
 
 WAR is an advanced metric that essentially measures how many wins an individual player contributes to their team with respect to a replacement level player.
 
-Our calculations are based on Baseball Reference's definitions [@warexpl] for $WAR$ (aka $bWAR$). Metrics such as $WAR$ can be calculated differently depending on the use case.
+Our calculations are based on Baseball Reference's definitions [@noauthor_war_nodate] for $WAR$ (aka $bWAR$). Metrics such as $WAR$ can be calculated differently depending on the use case.
 
-According to Baseball Reference's definition of $bWAR$ for a position player [@position]:
+According to Baseball Reference's definition of $bWAR$ for a position player [@noauthor_position_nodate]:
 
 $$
 bWAR = \frac{RC - RC_r}{a}
@@ -603,7 +607,7 @@ where $OPS_l$ denotes the league average $OPS$.
 
 For pitching statistics, our analysis will focus on the three metrics we consider to be the most indicative of a player's success at the mound: wins above replacement (WAR), earned run average (ERA), and walks and hits per inning pitched (WHIP).
 
-WAR is calculated differently for pitchers than it is position players. According to Baseball Reference's definition of WAR for a pitcher [@pitcher]:
+WAR is calculated differently for pitchers than it is position players. According to Baseball Reference's definition of WAR for a pitcher [@noauthor_pitcher_nodate]:
 
 $$
 bWAR = \frac{(RA9_r-RA9_a)\times\frac{IP}{9}}{a}
@@ -611,7 +615,7 @@ $$
 
 where $RA9_a$ is adjusted runs allowed per 9 innings, $RA9_r$ is replacement level runs allowed per 9 innings, $IP$ is innings pitched, and $a$ denotes a constant for the average number of runs per win. As previously mentioned, Baseball Reference assumes $a=10$ for their calculations.
 
-Note: Baseball Reference's official definition [@pitcher] of $bWAR$ for a pitcher also includes a leverage factor in the computation. The leverage factor essentially scales a pitcher's $WAR$ differently depending on if they are primarily a relief pitcher or a starting pitcher. Due to the lack of that information in our dataset, and for overall simplicity, our computation will be leaving this factor out.
+Note: Baseball Reference's official definition [@noauthor_pitcher_nodate] of $bWAR$ for a pitcher also includes a leverage factor in the computation. The leverage factor essentially scales a pitcher's $WAR$ differently depending on if they are primarily a relief pitcher or a starting pitcher. Due to the lack of that information in our dataset, and for overall simplicity, our computation will be leaving this factor out.
 
 $RA9_a$ can be computed using the following formula:
 
@@ -645,7 +649,7 @@ $$
 
 where $BB$ is total walks allowed and $H$ is total hits allowed.
 
-For more information on baseball statistics, please refer to Baseball Reference [@warexpl].
+For more information on baseball statistics, please refer to Baseball Reference [@noauthor_war_nodate].
 
 ## Methodology
 
@@ -666,6 +670,8 @@ $$
 where $S_a$ denotes the salary adjusted for inflation, $S$ denotes the raw salary, $CPI$ denotes the Consumer Price Index in the year of the salary, and $CPI_b$ denotes a constant for the baseline $CPI$. $CPI_b$ essentially is the $CPI$ for the year in which all salaries will be scaled to. For our analysis, $CPI_b$ will be set to the $CPI$ value in 2015, the most recent year of our dataset.
 
 Throughout this process, tables were joined together using the yearIDs, teamIDs, and playerIDs.
+
+\pagebreak
 
 # Data Analysis
 
@@ -729,6 +735,8 @@ Looking at this plot it is evident that there is a positive correlation between 
 
 There is also lots of variability between players and their batting averages. There are many outliers that when looking at just batting average, it does not justify what a player is being paid. For example, one player has a batting average of about .400 and is only getting paid about \$500,000, yet another player with a batting average at around .150 is getting paid roughly \$25,000,000. These outliers, among others, show that other factors must be having a stronger effect on salary.
 
+\pagebreak
+
 Figure 4 will look at the correlation between $OPS+$ and adjusted annual salary, plotted on a logarithmic scale.
 
 ```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of OPS+ vs Salary"}
@@ -742,6 +750,8 @@ plot4
 When looking at the correlation between $OPS+$ and adjusted annual salary, it can be observed that there is a positive correlation. As expected, players with higher $OPS+$ values generally do get paid more than with lower $OPS+$ values. We observe that many players with $OPS+$ values higher than 100, which is the league average, make between \$10M and \$31.6M dollars, showing that those players are rewarded.
 
 There also seems to be lots of undervaluation, for $OPS+$, compared to other metrics: many players close to 100 or even just above 100 are not getting paid nearly as much as their counterparts, when having very similar stats.
+
+\pagebreak
 
 ### Defensive Metrics
 
@@ -761,6 +771,8 @@ Pitchers with a $WAR$ over 2.5 generally make the most, showing that elite playe
 
 In other words, higher $WAR$ for pitchers generally means higher compensation, but lower $WAR$ does not necessarily mean lower compensation.
 
+\pagebreak
+
 Figure 6 will look at the correlation between $ERA$ and adjusted annual salary, plotted on a logarithmic scale.
 
 ```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of ERA vs Salary"}
@@ -777,6 +789,8 @@ However, there are still many players that make millions even though their $ERA$
 
 There is also lots of variability in this plot, which may account for other factors, so the next the plot will be evaluated to see if more findings can be uncovered.
 
+\pagebreak
+
 Figure 7 will look at the correlation between $WHIP$ and adjusted annual salary, plotted on a logarithmic scale.
 
 ```{r, fig.width=5, fig.height=3, fig.cap="Scatterplot of WHIP vs Salary"}
@@ -792,6 +806,8 @@ Similar to $ERA$, it is also evident that the correlation between $WHIP$ and adj
 For pitchers with $WHIP$ between 1.3 and 1.8, salaries vary drastically. This indicates that $WHIP$ is not a sole predictor of a pitcher’s salary. Some pitchers with $WHIP$ over 2.0 (which is not good) still get paid very well. Why could this be the case? Some factors are that the pitchers may have small sample size, a large contract spanning years, or the fact that they are a veteran pitcher.
 
 Most pitchers with a $WHIP$ below 1.0 are paid extremely well showing great compensation for these pitchers skillset.
+
+\pagebreak
 
 ### Summary
 
@@ -815,6 +831,8 @@ $OPS+$ also shows a positive correlation with adjusted annual salary, showing th
 
 $BA$ has the weakest correlation with average annual salary among the group, showing that teams now prioritize $WAR$ and $OPS+$ over how well a player can hit. When looking at the shift in modern baseball analytics, it can be seen that $WAR$ and $OPS+$ are the preferred indicators of a players overall value.
 
+\pagebreak
+
 Figure 9 is a heat map showing the correlations between the various pitching performance metrics.
 
 ```{r, fig.width=5, fig.height=3, fig.cap="Heat Map of Pitching Metrics"}
@@ -830,6 +848,8 @@ The pitching correlation matrix provides a visual summary of relationships betwe
 It is evident that there is a positive correlation (around 0.5) between $WAR$ and adjusted annual salary, showing that higher $WAR$ values contribute more to higher payouts and team success. Both $ERA$ and $WHIP$ have negative correlations to adjusted annual salary, which makes sense due to the fact that as a pitcher, when you lower the amount of runners on bases, you are doing a better job. While $ERA$ is important, having a weaker correlation shows that $ERA$ is a less reliable factor when looking at a pitcher’s contributions.
 
 From all of this analysis, we can conclude that $WAR$ is the best predictor of a player's annual adjusted salary.
+
+\pagebreak
 
 ## What is the salary breakdown across different positions?
 
@@ -888,6 +908,8 @@ top_10_under_table
 All players on this list have negative $WAR$ which is an awful performance. It can be observed that all players only appear once on this list, likely because when underperforming at this level, a player will likely be released from the team after that season.
 
 Pitchers also dominate this list with 8 out of the 10 players being pitchers. This is because pitchers are more likely prone to under perform due to small sample sizes, injuries, or poor outings by them which impact their $WAR$. There is only one catcher on this list which means if his $WAR$ was that poor that his defensive contributions negatively affected the team. From looking at the players salaries these players were likely early in their careers and still under performed significantly. One player, Phil Hughes, was a great prospect and failed to meet his expectations, which are the risks a team may have when paying someone so young when they arent fully developed.
+
+\pagebreak
 
 # Conclusion
 
